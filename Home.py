@@ -6,6 +6,16 @@ st.set_page_config(
     layout="wide"
 )
 
+# Add near the top of Home.py, after page config
+
+APP_PASSWORD = st.secrets.get("APP_PASSWORD", "")
+
+if APP_PASSWORD:
+    entered_password = st.text_input("Enter access password", type="password")
+    if entered_password != APP_PASSWORD:
+        st.warning("Enter the correct password to continue.")
+        st.stop()
+
 st.title("🧰 IP Toolbox")
 st.write("Internal tools for patent and IP research. Select a tool below to get started.")
 
