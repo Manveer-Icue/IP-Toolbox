@@ -132,30 +132,280 @@ def get_gemini_keys():
 
 st.markdown(
     """
-    <style>
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ============================================================
+   GLOBAL
+   ============================================================ */
+
+.stApp {
+    background-color: #F7F7F5;
+}
+
+.block-container {
+    max-width: 1180px;
+    padding-top: 2.4rem;
+    padding-bottom: 3.5rem;
+}
+
+* {
+    font-family: 'Inter', sans-serif;
+}
+
+
+/* ============================================================
+   TOP NAVIGATION
+   ============================================================ */
+
+div[data-testid="stButton"] button {
+    border-radius: 7px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    border: 1px solid #E1E1DE;
+    background-color: #FFFFFF;
+    color: #4D5155;
+    min-height: 36px;
+    transition: all 0.15s ease;
+}
+
+div[data-testid="stButton"] button:hover {
+    border-color: #EE3C18;
+    color: #EE3C18;
+    background-color: #FFF8F6;
+}
+
+div[data-testid="stButton"] button:focus {
+    box-shadow: 0 0 0 3px rgba(238, 60, 24, 0.12);
+    outline: none;
+}
+
+
+/* ============================================================
+   PAGE HEADER
+   ============================================================ */
+
+.main-title {
+    font-size: 2.35rem;
+    font-weight: 700;
+    color: #EE3C18;
+    letter-spacing: -0.04em;
+    line-height: 1.15;
+    margin-bottom: 0.35rem;
+}
+
+.sub-title {
+    font-size: 1.08rem;
+    font-weight: 500;
+    color: #34383C;
+    margin-bottom: 1.05rem;
+}
+
+/* Normal descriptive text below the title */
+.block-container > div[data-testid="stVerticalBlock"] p {
+    color: #73777B;
+    line-height: 1.65;
+}
+
+/* ============================================================
+   PROCESSING INCLUDES
+   ============================================================ */
+
+.block-container .stMarkdown ul {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E5E2;
+    border-radius: 10px;
+    padding: 1rem 1.3rem 1rem 2.35rem;
+    margin-top: 0.65rem;
+    margin-bottom: 1.8rem;
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.025);
+}
+
+.block-container .stMarkdown li {
+    color: #656A6F;
+    font-size: 0.86rem;
+    line-height: 1.6;
+    margin-bottom: 0.15rem;
+}
+
+.block-container .stMarkdown li::marker {
+    color: #EE3C18;
+}
+
+/* ============================================================
+   SECTION HEADINGS
+   ============================================================ */
+
+.block-container h3 {
+    color: #4B4F53;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.11em;
+    margin-top: 1.5rem;
+    margin-bottom: 0.8rem;
+}
+
+/* ============================================================
+   FILE UPLOAD
+   ============================================================ */
+
+[data-testid="stFileUploader"] {
+    background-color: #FFFFFF;
+    border: 1px dashed #D8D8D4;
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.025);
+}
+
+[data-testid="stFileUploader"]:hover {
+    border-color: #EE3C18;
+}
+
+[data-testid="stFileUploaderDropzone"] {
+    background-color: #FAFAF9;
+    border: none;
+}
+
+/* ============================================================
+   NUMBER INPUT
+   ============================================================ */
+
+div[data-testid="stNumberInput"] label {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #55595D;
+}
+
+div[data-testid="stNumberInput"] input {
+    border-radius: 7px;
+    border: 1px solid #DCDCD8;
+    background-color: #FFFFFF;
+}
+
+div[data-testid="stNumberInput"] input:focus {
+    border-color: #EE3C18;
+    box-shadow: 0 0 0 1px #EE3C18;
+}
+
+/* ============================================================
+   ALERTS / CHECKPOINT MESSAGES
+   ============================================================ */
+
+div[data-testid="stAlert"] {
+    border-radius: 8px;
+    font-size: 0.84rem;
+    border-width: 1px;
+}
+
+/* ============================================================
+   PRIMARY ACTION BUTTONS
+   ============================================================ */
+
+div[data-testid="stButton"] button[kind="primary"] {
+    background-color: #EE3C18;
+    border: 1px solid #EE3C18;
+    color: #FFFFFF;
+    border-radius: 8px;
+    font-size: 0.86rem;
+    font-weight: 600;
+    min-height: 42px;
+    letter-spacing: 0.01em;
+}
+
+div[data-testid="stButton"] button[kind="primary"]:hover {
+    background-color: #D93414;
+    border-color: #D93414;
+    color: #FFFFFF;
+}
+
+/* Download button */
+
+div[data-testid="stDownloadButton"] button {
+    background-color: #EE3C18;
+    border: 1px solid #EE3C18;
+    color: #FFFFFF;
+    border-radius: 8px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    min-height: 42px;
+}
+
+div[data-testid="stDownloadButton"] button:hover {
+    background-color: #D93414;
+    border-color: #D93414;
+    color: #FFFFFF;
+}
+
+/* ============================================================
+   PROCESSING AREA
+   ============================================================ */
+
+.block-container hr {
+    border: none;
+    border-top: 1px solid #E2E2DF;
+    margin: 1.8rem 0;
+}
+
+/* ============================================================
+   METRIC CARDS
+   ============================================================ */
+
+div[data-testid="stMetric"] {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E5E2;
+    border-radius: 9px;
+    padding: 0.9rem 1rem;
+    min-height: 88px;
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.025);
+}
+
+div[data-testid="stMetricLabel"] {
+    color: #85898D !important;
+    font-size: 0.72rem !important;
+    font-weight: 500 !important;
+}
+
+div[data-testid="stMetricValue"] {
+    color: #2D3033 !important;
+    font-size: 1.35rem !important;
+    font-weight: 600 !important;
+}
+
+/* ============================================================
+   SUCCESS / INFO / WARNING OUTPUT
+   ============================================================ */
+
+div[data-testid="stAlert"] p {
+    line-height: 1.55;
+}
+
+/* ============================================================
+   SPINNER / STATUS TEXT
+   ============================================================ */
+
+[data-testid="stSpinner"] {
+    color: #EE3C18;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 800px) {
+
+    .block-container {
+        padding-top: 1.8rem;
+    }
 
     .main-title {
-        font-size: 36px;
-        font-weight: 700;
-        margin-bottom: 0px;
+        font-size: 2rem;
     }
+}
 
-    .sub-title {
-        font-size: 18px;
-        color: #666666;
-        margin-bottom: 25px;
-    }
-
-    .upload-box {
-        padding: 20px;
-        border-radius: 10px;
-        border: 1px solid #DDDDDD;
-        margin-top: 10px;
-        margin-bottom: 20px;
-    }
-
-    </style>
-    """,
+</style>
+""",
     unsafe_allow_html=True
 )
 
