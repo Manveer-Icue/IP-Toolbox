@@ -146,7 +146,7 @@ st.markdown(
 
 .block-container {
     max-width: 1180px;
-    padding-top: 2.4rem;
+    padding-top: 4.0rem;
     padding-bottom: 3.5rem;
 }
 
@@ -306,12 +306,17 @@ div[data-testid="stAlert"] {
 div[data-testid="stButton"] button[kind="primary"] {
     background-color: #EE3C18;
     border: 1px solid #EE3C18;
-    color: #FFFFFF;
+    color: #FFFFFF !important;
     border-radius: 8px;
     font-size: 0.86rem;
     font-weight: 600;
     min-height: 42px;
     letter-spacing: 0.01em;
+}
+
+div[data-testid="stButton"] button[kind="primary"] p,
+div[data-testid="stButton"] button[kind="primary"] span {
+    color: #FFFFFF !important;
 }
 
 div[data-testid="stButton"] button[kind="primary"]:hover {
@@ -325,11 +330,16 @@ div[data-testid="stButton"] button[kind="primary"]:hover {
 div[data-testid="stDownloadButton"] button {
     background-color: #EE3C18;
     border: 1px solid #EE3C18;
-    color: #FFFFFF;
+    color: #FFFFFF !important;
     border-radius: 8px;
     font-size: 0.84rem;
     font-weight: 600;
     min-height: 42px;
+}
+
+div[data-testid="stDownloadButton"] button p,
+div[data-testid="stDownloadButton"] button span {
+    color: #FFFFFF !important;
 }
 
 div[data-testid="stDownloadButton"] button:hover {
