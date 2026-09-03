@@ -48,6 +48,8 @@ st.markdown(
 
 require_password()
 
+if st.button("← Back to Home"):
+    st.switch_page("Home.py")
 
 # ============================================================
 # 2. INTERNAL CONFIGURATION
