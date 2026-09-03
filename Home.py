@@ -1,20 +1,19 @@
 import streamlit as st
+from auth import require_password
 
-st.set_page_config(
-    page_title="IP Toolbox",
-    page_icon="🧰",
-    layout="wide"
+st.set_page_config(page_title="IP Toolbox", page_icon="🧰", layout="wide")
+
+st.markdown(
+    """
+    <style>
+    [data-testid="stSidebar"] {display: none;}
+    [data-testid="collapsedControl"] {display: none;}
+    </style>
+    """,
+    unsafe_allow_html=True
 )
 
-# Add near the top of Home.py, after page config
-
-APP_PASSWORD = st.secrets.get("APP_PASSWORD", "")
-
-if APP_PASSWORD:
-    entered_password = st.text_input("Enter access password", type="password")
-    if entered_password != APP_PASSWORD:
-        st.warning("Enter the correct password to continue.")
-        st.stop()
+require_password()
 
 st.title("🧰 IP Toolbox")
 st.write("Internal tools for patent and IP research. Select a tool below to get started.")
