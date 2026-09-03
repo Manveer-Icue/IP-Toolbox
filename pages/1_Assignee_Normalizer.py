@@ -34,6 +34,20 @@ st.set_page_config(
     layout="wide"
 )
 
+from auth import require_password
+
+st.markdown(
+    """
+    <style>
+    [data-testid="stSidebar"] {display: none;}
+    [data-testid="collapsedControl"] {display: none;}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+require_password()
+
 
 # ============================================================
 # 2. INTERNAL CONFIGURATION
