@@ -56,6 +56,7 @@ st.markdown(
         font-family: 'Inter', sans-serif;
     }
 
+
     /* --------------------------------------------------------
        HEADER
     -------------------------------------------------------- */
@@ -86,6 +87,7 @@ st.markdown(
         margin-bottom: 1rem;
     }
 
+
     /* --------------------------------------------------------
        TOOL CARDS
     -------------------------------------------------------- */
@@ -95,13 +97,13 @@ st.markdown(
         border: 1px solid #E5E5E2;
         border-radius: 12px;
         padding: 1.65rem;
-        min-height: 235px;
+        height: 260px;
+        box-sizing: border-box;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.035);
         transition:
             transform 0.18s ease,
             box-shadow 0.18s ease,
             border-color 0.18s ease;
-        box-sizing: border-box;
     }
 
     .tool-card:hover {
@@ -120,41 +122,32 @@ st.markdown(
         box-shadow: none;
     }
 
+
     /* --------------------------------------------------------
-       TOOL ICON
+       TOOL NAME BOX
     -------------------------------------------------------- */
 
-    .tool-icon {
-        width: 42px;
-        height: 42px;
-        border-radius: 9px;
+    .tool-name-box {
+        display: inline-flex;
+        align-items: center;
         background-color: #FFF0EC;
         color: #EE3C18;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.05rem;
-        font-weight: 700;
-        margin-bottom: 1.15rem;
-    }
-
-    .tool-icon-disabled {
-        background-color: #F0F0EE;
-        color: #999C9F;
-    }
-
-    /* --------------------------------------------------------
-       TOOL NAME
-    -------------------------------------------------------- */
-
-    .tool-name {
-        font-size: 1.12rem;
+        border: 1px solid #FFD9D1;
+        border-radius: 8px;
+        padding: 0.65rem 0.9rem;
+        font-size: 1rem;
         font-weight: 600;
-        color: #242629;
+        line-height: 1.2;
         letter-spacing: -0.015em;
-        line-height: 1.4;
-        margin-bottom: 0.55rem;
+        margin-bottom: 1rem;
     }
+
+    .tool-name-box-disabled {
+        background-color: #F0F0EE;
+        color: #73777B;
+        border-color: #E5E5E2;
+    }
+
 
     /* --------------------------------------------------------
        STATUS
@@ -206,6 +199,7 @@ st.markdown(
         background-color: #9A9DA0;
     }
 
+
     /* --------------------------------------------------------
        DESCRIPTION
     -------------------------------------------------------- */
@@ -221,6 +215,7 @@ st.markdown(
         line-height: 1.6;
         color: #96999D;
     }
+
 
     /* --------------------------------------------------------
        BUTTON
@@ -253,6 +248,7 @@ st.markdown(
         outline: none;
     }
 
+
     /* --------------------------------------------------------
        FOOTER
     -------------------------------------------------------- */
@@ -269,11 +265,13 @@ st.markdown(
         color: #999C9F;
     }
 
+
     /* --------------------------------------------------------
        RESPONSIVE
     -------------------------------------------------------- */
 
     @media (max-width: 800px) {
+
         .block-container {
             padding-top: 2.5rem;
         }
@@ -281,7 +279,13 @@ st.markdown(
         .toolbox-wordmark {
             font-size: 2.1rem;
         }
+
+        .tool-card {
+            height: auto;
+            min-height: 260px;
+        }
     }
+
     </style>
     """,
     unsafe_allow_html=True
@@ -325,19 +329,24 @@ with col1:
     st.markdown(
         """
         <div class="tool-card">
-            <div class="tool-icon">A</div>
-            <div class="tool-name">
+
+            <div class="tool-name-box">
                 Assignee Normalizer
+            </div>
+
+            <div>
                 <span class="status-live">
                     <span class="status-dot-live"></span>
                     Live
                 </span>
             </div>
-            <div class="tool-desc">
+
+            <div class="tool-desc" style="margin-top: 0.9rem;">
                 Resolves inconsistent parent assignee names using AI,
                 including corporate entity matching, subsidiary detection,
                 and ultimate parent identification.
             </div>
+
         </div>
         """,
         unsafe_allow_html=True
@@ -359,19 +368,24 @@ with col2:
     st.markdown(
         """
         <div class="tool-card tool-card-disabled">
-            <div class="tool-icon tool-icon-disabled">F</div>
-            <div class="tool-name">
+
+            <div class="tool-name-box tool-name-box-disabled">
                 FTO Analysis
+            </div>
+
+            <div>
                 <span class="status-pending">
                     <span class="status-dot-pending"></span>
                     In progress
                 </span>
             </div>
-            <div class="tool-desc-pending">
+
+            <div class="tool-desc-pending" style="margin-top: 0.9rem;">
                 Supports freedom-to-operate analysis by helping
                 researchers identify and evaluate potentially relevant
                 patent rights.
             </div>
+
         </div>
         """,
         unsafe_allow_html=True
@@ -387,18 +401,23 @@ with col3:
     st.markdown(
         """
         <div class="tool-card tool-card-disabled">
-            <div class="tool-icon tool-icon-disabled">P</div>
-            <div class="tool-name">
+
+            <div class="tool-name-box tool-name-box-disabled">
                 Patent Screening
+            </div>
+
+            <div>
                 <span class="status-pending">
                     <span class="status-dot-pending"></span>
                     Coming soon
                 </span>
             </div>
-            <div class="tool-desc-pending">
+
+            <div class="tool-desc-pending" style="margin-top: 0.9rem;">
                 Streamlines initial patent review and helps identify
                 potentially relevant documents for deeper analysis.
             </div>
+
         </div>
         """,
         unsafe_allow_html=True
