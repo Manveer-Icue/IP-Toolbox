@@ -7,6 +7,7 @@ st.set_page_config(
     layout="wide"
 )
 
+# Hide sidebar
 st.markdown(
     """
     <style>
@@ -27,107 +28,241 @@ require_password()
 st.markdown(
     """
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    /* --------------------------------------------------------
+       GLOBAL
+    -------------------------------------------------------- */
 
     .stApp {
-        background-color: #14181F;
+        background: #F7F7F5;
     }
 
     .block-container {
-        max-width: 760px;
-        padding-top: 4.5rem;
-        padding-bottom: 4rem;
+        max-width: 1180px;
+        padding-top: 4rem;
+        padding-bottom: 3rem;
     }
 
     * {
         font-family: 'Inter', sans-serif;
     }
 
+    /* --------------------------------------------------------
+       HEADER
+    -------------------------------------------------------- */
+
+    .toolbox-header {
+        margin-bottom: 0.5rem;
+    }
+
     .toolbox-wordmark {
-        font-family: 'Fraunces', serif;
-        font-size: 2.4rem;
-        font-weight: 600;
-        color: #F2EFE6;
-        letter-spacing: -0.01em;
-        margin-bottom: 0.4rem;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #EE3C18;
+        letter-spacing: -0.045em;
+        line-height: 1.1;
+        margin-bottom: 0.65rem;
     }
 
     .toolbox-intro {
-        font-size: 1.02rem;
-        line-height: 1.6;
-        color: #8B93A3;
-        max-width: 52ch;
-        margin-bottom: 2.6rem;
+        font-size: 1rem;
+        line-height: 1.65;
+        color: #6B6F76;
+        max-width: 650px;
+        margin-bottom: 2.8rem;
     }
 
-    .registry-rule {
-        border: none;
-        border-top: 1px solid #2A313D;
-        margin: 1.7rem 0;
+    .section-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #8A8E94;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        margin-bottom: 1rem;
+    }
+
+    /* --------------------------------------------------------
+       TOOL CARDS
+    -------------------------------------------------------- */
+
+    .tool-card {
+        background: #FFFFFF;
+        border: 1px solid #E5E5E2;
+        border-radius: 12px;
+        padding: 1.65rem 1.65rem 1.5rem 1.65rem;
+        min-height: 235px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.035);
+        transition:
+            transform 0.18s ease,
+            box-shadow 0.18s ease,
+            border-color 0.18s ease;
+        margin-bottom: 1rem;
+    }
+
+    .tool-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.07);
+        border-color: #D9D9D5;
+    }
+
+    .tool-card-disabled {
+        background: #FBFBFA;
+        box-shadow: none;
+    }
+
+    .tool-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 9px;
+        background: #FFF0EC;
+        color: #EE3C18;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin-bottom: 1.15rem;
+    }
+
+    .tool-icon-disabled {
+        background: #F1F1EF;
+        color: #A4A6A8;
     }
 
     .tool-name {
-        font-family: 'Fraunces', serif;
-        font-size: 1.3rem;
+        font-size: 1.12rem;
         font-weight: 600;
-        color: #F2EFE6;
-        margin-bottom: 0.35rem;
-    }
-
-    .tool-status-live {
-        font-size: 0.82rem;
-        color: #B08D57;
-        margin-left: 0.6rem;
-        font-family: 'Inter', sans-serif;
-        font-weight: 500;
-    }
-
-    .tool-status-pending {
-        font-size: 0.82rem;
-        color: #5C6472;
-        margin-left: 0.6rem;
-        font-family: 'Inter', sans-serif;
-        font-weight: 500;
+        color: #242629;
+        letter-spacing: -0.015em;
+        margin-bottom: 0.5rem;
     }
 
     .tool-desc {
-        font-size: 0.95rem;
-        line-height: 1.55;
-        color: #A7ADB8;
-        max-width: 58ch;
+        font-size: 0.88rem;
+        line-height: 1.6;
+        color: #74787D;
+        min-height: 67px;
     }
 
     .tool-desc-pending {
-        font-size: 0.95rem;
-        line-height: 1.55;
-        color: #5C6472;
-        max-width: 58ch;
-        font-style: italic;
+        font-size: 0.88rem;
+        line-height: 1.6;
+        color: #9A9DA0;
+        min-height: 67px;
+    }
+
+    /* --------------------------------------------------------
+       STATUS
+    -------------------------------------------------------- */
+
+    .status-live {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        margin-left: 8px;
+        padding: 3px 8px;
+        border-radius: 20px;
+        background: #FFF0EC;
+        color: #EE3C18;
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        vertical-align: middle;
+        text-transform: uppercase;
+    }
+
+    .status-pending {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        margin-left: 8px;
+        padding: 3px 8px;
+        border-radius: 20px;
+        background: #F1F1EF;
+        color: #8D9094;
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        vertical-align: middle;
+        text-transform: uppercase;
+    }
+
+    .status-dot-live {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: #EE3C18;
+    }
+
+    .status-dot-pending {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: #A4A6A8;
+    }
+
+    /* --------------------------------------------------------
+       BUTTON
+    -------------------------------------------------------- */
+
+    div[data-testid="stButton"] {
+        margin-top: 0.8rem;
     }
 
     div[data-testid="stButton"] button {
-        background: none;
-        border: none;
-        color: #B08D57;
-        font-family: 'Inter', sans-serif;
-        font-size: 0.95rem;
-        font-weight: 500;
-        padding: 0;
-        margin-top: 0.5rem;
-        text-decoration: underline;
-        text-underline-offset: 3px;
+        background: #EE3C18;
+        color: #FFFFFF;
+        border: 1px solid #EE3C18;
+        border-radius: 7px;
+        font-size: 0.84rem;
+        font-weight: 600;
+        padding: 0.42rem 0.85rem;
+        min-height: 36px;
+        transition: all 0.15s ease;
     }
 
     div[data-testid="stButton"] button:hover {
-        color: #C9A876;
-        background: none;
+        background: #D93414;
+        border-color: #D93414;
+        color: #FFFFFF;
     }
 
     div[data-testid="stButton"] button:focus {
-        box-shadow: none;
-        outline: 2px solid #B08D57;
-        outline-offset: 2px;
+        box-shadow: 0 0 0 3px rgba(238, 60, 24, 0.15);
+        outline: none;
     }
+
+    /* --------------------------------------------------------
+       FOOTER
+    -------------------------------------------------------- */
+
+    .footer-rule {
+        border: none;
+        border-top: 1px solid #E2E2DF;
+        margin-top: 2.5rem;
+        margin-bottom: 1.1rem;
+    }
+
+    .footer {
+        font-size: 0.76rem;
+        color: #999C9F;
+    }
+
+    /* --------------------------------------------------------
+       RESPONSIVE
+    -------------------------------------------------------- */
+
+    @media (max-width: 800px) {
+        .block-container {
+            padding-top: 2.5rem;
+        }
+
+        .toolbox-wordmark {
+            font-size: 2.1rem;
+        }
+    }
+
     </style>
     """,
     unsafe_allow_html=True
@@ -135,69 +270,146 @@ st.markdown(
 
 
 # ============================================================
-# CONTENT
+# HEADER
 # ============================================================
-
-st.markdown('<div class="toolbox-wordmark">IP Toolbox</div>', unsafe_allow_html=True)
 
 st.markdown(
     """
-    <div class="toolbox-intro">
-    A working set of tools built for the patent research team.
-    Pick one below to get started.
+    <div class="toolbox-header">
+        <div class="toolbox-wordmark">IP Toolbox</div>
+        <div class="toolbox-intro">
+            A focused set of tools built to support patent research,
+            analysis, and portfolio workflows.
+        </div>
     </div>
     """,
     unsafe_allow_html=True
 )
 
-st.markdown('<hr class="registry-rule">', unsafe_allow_html=True)
+
+# ============================================================
+# TOOLS
+# ============================================================
+
+st.markdown(
+    '<div class="section-label">Available tools</div>',
+    unsafe_allow_html=True
+)
+
+col1, col2, col3 = st.columns(3, gap="large")
+
 
 # ------------------------------------------------------------
-# Tool: Assignee Normalizer (live)
+# TOOL 1: ASSIGNEE NORMALIZER
 # ------------------------------------------------------------
-
-col1, col2 = st.columns([5, 1])
 
 with col1:
+
     st.markdown(
         """
-        <div class="tool-name">Assignee Normalizer<span class="tool-status-live">Live</span></div>
-        <div class="tool-desc">
-        Resolves inconsistent parent assignee names using AI — corporate
-        entity matching, subsidiary detection, and ultimate parent
-        identification for patent datasets.
+        <div class="tool-card">
+
+            <div class="tool-icon">A</div>
+
+            <div class="tool-name">
+                Assignee Normalizer
+                <span class="status-live">
+                    <span class="status-dot-live"></span>
+                    Live
+                </span>
+            </div>
+
+            <div class="tool-desc">
+                Resolves inconsistent parent assignee names using AI,
+                including corporate entity matching, subsidiary
+                detection, and ultimate parent identification.
+            </div>
+
         </div>
         """,
         unsafe_allow_html=True
     )
-    if st.button("Open tool", key="open_assignee_normalizer"):
+
+    if st.button(
+        "Open tool  →",
+        key="open_assignee_normalizer"
+    ):
         st.switch_page("pages/1_Assignee_Normalizer.py")
 
-st.markdown('<hr class="registry-rule">', unsafe_allow_html=True)
 
 # ------------------------------------------------------------
-# Tool: FTO Tool (placeholder - not yet available)
+# TOOL 2: FTO ANALYSIS
 # ------------------------------------------------------------
 
-col1, col2 = st.columns([5, 1])
+with col2:
 
-with col1:
     st.markdown(
         """
-        <div class="tool-name">FTO Tool<span class="tool-status-pending">In progress</span></div>
-        <div class="tool-desc-pending">
-        Freedom-to-operate analysis support. Not yet available.
+        <div class="tool-card tool-card-disabled">
+
+            <div class="tool-icon tool-icon-disabled">F</div>
+
+            <div class="tool-name">
+                FTO Analysis
+                <span class="status-pending">
+                    <span class="status-dot-pending"></span>
+                    In progress
+                </span>
+            </div>
+
+            <div class="tool-desc-pending">
+                Supports freedom-to-operate analysis by helping
+                researchers identify and evaluate potentially
+                relevant patent rights.
+            </div>
+
         </div>
         """,
         unsafe_allow_html=True
     )
 
-st.markdown('<hr class="registry-rule">', unsafe_allow_html=True)
+
+# ------------------------------------------------------------
+# TOOL 3: PATENT SCREENING
+# ------------------------------------------------------------
+
+with col3:
+
+    st.markdown(
+        """
+        <div class="tool-card tool-card-disabled">
+
+            <div class="tool-icon tool-icon-disabled">P</div>
+
+            <div class="tool-name">
+                Patent Screening
+                <span class="status-pending">
+                    <span class="status-dot-pending"></span>
+                    Coming soon
+                </span>
+            </div>
+
+            <div class="tool-desc-pending">
+                Streamlines initial patent review and helps identify
+                potentially relevant documents for deeper analysis.
+            </div>
+
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+# ============================================================
+# FOOTER
+# ============================================================
 
 st.markdown(
     """
-    <div style="font-size: 0.85rem; color: #5C6472; margin-top: 1rem;">
-    Internal tool · IP Toolbox · Questions or issues? Reach out anytime.
+    <hr class="footer-rule">
+
+    <div class="footer">
+        Internal IP Research Platform
     </div>
     """,
     unsafe_allow_html=True
