@@ -352,7 +352,7 @@ and ultimate parent identification.
 
 
 # ============================================================
-# TOOL 2: FTO ANALYSIS
+# TOOL 2: FTO Claim Screening
 # ============================================================
 
 with col2:
@@ -360,7 +360,7 @@ with col2:
     st.markdown(
         """
 <div class="tool-card tool-card-disabled">
-<div class="tool-name-box tool-name-box-disabled">FTO Analysis</div>
+<div class="tool-name-box tool-name-box-disabled">FTO Claim Screening</div>
 <div>
 <span class="status-pending">
 <span class="status-dot-pending"></span>
@@ -368,9 +368,7 @@ In progress
 </span>
 </div>
 <div class="tool-desc-pending" style="margin-top: 0.9rem;">
-Supports freedom-to-operate analysis by helping
-researchers identify and evaluate potentially relevant
-patent rights.
+Supports freedom-to-operate research by helping researchers identify and evaluate relevant patent claims and supporting rationale.
 </div>
 </div>
 """,
@@ -379,7 +377,7 @@ patent rights.
 
 
 # ============================================================
-# TOOL 3: PATENT SCREENING
+# TOOL 3: Sample
 # ============================================================
 
 with col3:
@@ -387,7 +385,7 @@ with col3:
     st.markdown(
         """
 <div class="tool-card tool-card-disabled">
-<div class="tool-name-box tool-name-box-disabled">Patent Screening</div>
+<div class="tool-name-box tool-name-box-disabled">Sample</div>
 <div>
 <span class="status-pending">
 <span class="status-dot-pending"></span>
@@ -395,8 +393,7 @@ Coming soon
 </span>
 </div>
 <div class="tool-desc-pending" style="margin-top: 0.9rem;">
-Streamlines initial patent review and helps identify
-potentially relevant documents for deeper analysis.
+New tool ideas arising from different research requirements.
 </div>
 </div>
 """,
