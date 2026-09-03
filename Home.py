@@ -7,12 +7,20 @@ st.set_page_config(
     layout="wide"
 )
 
-# Hide sidebar
+# ============================================================
+# HIDE SIDEBAR
+# ============================================================
+
 st.markdown(
     """
     <style>
-    [data-testid="stSidebar"] {display: none;}
-    [data-testid="collapsedControl"] {display: none;}
+    [data-testid="stSidebar"] {
+        display: none;
+    }
+
+    [data-testid="collapsedControl"] {
+        display: none;
+    }
     </style>
     """,
     unsafe_allow_html=True
@@ -35,7 +43,7 @@ st.markdown(
     -------------------------------------------------------- */
 
     .stApp {
-        background: #F7F7F5;
+        background-color: #F7F7F5;
     }
 
     .block-container {
@@ -51,10 +59,6 @@ st.markdown(
     /* --------------------------------------------------------
        HEADER
     -------------------------------------------------------- */
-
-    .toolbox-header {
-        margin-bottom: 0.5rem;
-    }
 
     .toolbox-wordmark {
         font-size: 2.5rem;
@@ -87,17 +91,17 @@ st.markdown(
     -------------------------------------------------------- */
 
     .tool-card {
-        background: #FFFFFF;
+        background-color: #FFFFFF;
         border: 1px solid #E5E5E2;
         border-radius: 12px;
-        padding: 1.65rem 1.65rem 1.5rem 1.65rem;
+        padding: 1.65rem;
         min-height: 235px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.035);
         transition:
             transform 0.18s ease,
             box-shadow 0.18s ease,
             border-color 0.18s ease;
-        margin-bottom: 1rem;
+        box-sizing: border-box;
     }
 
     .tool-card:hover {
@@ -107,49 +111,49 @@ st.markdown(
     }
 
     .tool-card-disabled {
-        background: #FBFBFA;
+        background-color: #FBFBFA;
         box-shadow: none;
     }
+
+    .tool-card-disabled:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    /* --------------------------------------------------------
+       TOOL ICON
+    -------------------------------------------------------- */
 
     .tool-icon {
         width: 42px;
         height: 42px;
         border-radius: 9px;
-        background: #FFF0EC;
+        background-color: #FFF0EC;
         color: #EE3C18;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.15rem;
+        font-size: 1.05rem;
         font-weight: 700;
         margin-bottom: 1.15rem;
     }
 
     .tool-icon-disabled {
-        background: #F1F1EF;
-        color: #A4A6A8;
+        background-color: #F0F0EE;
+        color: #999C9F;
     }
+
+    /* --------------------------------------------------------
+       TOOL NAME
+    -------------------------------------------------------- */
 
     .tool-name {
         font-size: 1.12rem;
         font-weight: 600;
         color: #242629;
         letter-spacing: -0.015em;
-        margin-bottom: 0.5rem;
-    }
-
-    .tool-desc {
-        font-size: 0.88rem;
-        line-height: 1.6;
-        color: #74787D;
-        min-height: 67px;
-    }
-
-    .tool-desc-pending {
-        font-size: 0.88rem;
-        line-height: 1.6;
-        color: #9A9DA0;
-        min-height: 67px;
+        line-height: 1.4;
+        margin-bottom: 0.55rem;
     }
 
     /* --------------------------------------------------------
@@ -163,9 +167,9 @@ st.markdown(
         margin-left: 8px;
         padding: 3px 8px;
         border-radius: 20px;
-        background: #FFF0EC;
+        background-color: #FFF0EC;
         color: #EE3C18;
-        font-size: 0.68rem;
+        font-size: 0.66rem;
         font-weight: 600;
         letter-spacing: 0.04em;
         vertical-align: middle;
@@ -179,9 +183,9 @@ st.markdown(
         margin-left: 8px;
         padding: 3px 8px;
         border-radius: 20px;
-        background: #F1F1EF;
-        color: #8D9094;
-        font-size: 0.68rem;
+        background-color: #F0F0EE;
+        color: #85888C;
+        font-size: 0.66rem;
         font-weight: 600;
         letter-spacing: 0.04em;
         vertical-align: middle;
@@ -192,14 +196,30 @@ st.markdown(
         width: 5px;
         height: 5px;
         border-radius: 50%;
-        background: #EE3C18;
+        background-color: #EE3C18;
     }
 
     .status-dot-pending {
         width: 5px;
         height: 5px;
         border-radius: 50%;
-        background: #A4A6A8;
+        background-color: #9A9DA0;
+    }
+
+    /* --------------------------------------------------------
+       DESCRIPTION
+    -------------------------------------------------------- */
+
+    .tool-desc {
+        font-size: 0.88rem;
+        line-height: 1.6;
+        color: #74787D;
+    }
+
+    .tool-desc-pending {
+        font-size: 0.88rem;
+        line-height: 1.6;
+        color: #96999D;
     }
 
     /* --------------------------------------------------------
@@ -211,7 +231,7 @@ st.markdown(
     }
 
     div[data-testid="stButton"] button {
-        background: #EE3C18;
+        background-color: #EE3C18;
         color: #FFFFFF;
         border: 1px solid #EE3C18;
         border-radius: 7px;
@@ -223,7 +243,7 @@ st.markdown(
     }
 
     div[data-testid="stButton"] button:hover {
-        background: #D93414;
+        background-color: #D93414;
         border-color: #D93414;
         color: #FFFFFF;
     }
@@ -240,7 +260,7 @@ st.markdown(
     .footer-rule {
         border: none;
         border-top: 1px solid #E2E2DF;
-        margin-top: 2.5rem;
+        margin-top: 2.7rem;
         margin-bottom: 1.1rem;
     }
 
@@ -262,7 +282,6 @@ st.markdown(
             font-size: 2.1rem;
         }
     }
-
     </style>
     """,
     unsafe_allow_html=True
@@ -275,12 +294,10 @@ st.markdown(
 
 st.markdown(
     """
-    <div class="toolbox-header">
-        <div class="toolbox-wordmark">IP Toolbox</div>
-        <div class="toolbox-intro">
-            A focused set of tools built to support patent research,
-            analysis, and portfolio workflows.
-        </div>
+    <div class="toolbox-wordmark">IP Toolbox</div>
+    <div class="toolbox-intro">
+        A focused set of tools built to support patent research,
+        analysis, and portfolio workflows.
     </div>
     """,
     unsafe_allow_html=True
@@ -288,7 +305,7 @@ st.markdown(
 
 
 # ============================================================
-# TOOLS
+# AVAILABLE TOOLS
 # ============================================================
 
 st.markdown(
@@ -299,18 +316,16 @@ st.markdown(
 col1, col2, col3 = st.columns(3, gap="large")
 
 
-# ------------------------------------------------------------
+# ============================================================
 # TOOL 1: ASSIGNEE NORMALIZER
-# ------------------------------------------------------------
+# ============================================================
 
 with col1:
 
     st.markdown(
         """
         <div class="tool-card">
-
             <div class="tool-icon">A</div>
-
             <div class="tool-name">
                 Assignee Normalizer
                 <span class="status-live">
@@ -318,13 +333,11 @@ with col1:
                     Live
                 </span>
             </div>
-
             <div class="tool-desc">
                 Resolves inconsistent parent assignee names using AI,
-                including corporate entity matching, subsidiary
-                detection, and ultimate parent identification.
+                including corporate entity matching, subsidiary detection,
+                and ultimate parent identification.
             </div>
-
         </div>
         """,
         unsafe_allow_html=True
@@ -337,18 +350,16 @@ with col1:
         st.switch_page("pages/1_Assignee_Normalizer.py")
 
 
-# ------------------------------------------------------------
+# ============================================================
 # TOOL 2: FTO ANALYSIS
-# ------------------------------------------------------------
+# ============================================================
 
 with col2:
 
     st.markdown(
         """
         <div class="tool-card tool-card-disabled">
-
             <div class="tool-icon tool-icon-disabled">F</div>
-
             <div class="tool-name">
                 FTO Analysis
                 <span class="status-pending">
@@ -356,31 +367,27 @@ with col2:
                     In progress
                 </span>
             </div>
-
             <div class="tool-desc-pending">
                 Supports freedom-to-operate analysis by helping
-                researchers identify and evaluate potentially
-                relevant patent rights.
+                researchers identify and evaluate potentially relevant
+                patent rights.
             </div>
-
         </div>
         """,
         unsafe_allow_html=True
     )
 
 
-# ------------------------------------------------------------
+# ============================================================
 # TOOL 3: PATENT SCREENING
-# ------------------------------------------------------------
+# ============================================================
 
 with col3:
 
     st.markdown(
         """
         <div class="tool-card tool-card-disabled">
-
             <div class="tool-icon tool-icon-disabled">P</div>
-
             <div class="tool-name">
                 Patent Screening
                 <span class="status-pending">
@@ -388,12 +395,10 @@ with col3:
                     Coming soon
                 </span>
             </div>
-
             <div class="tool-desc-pending">
                 Streamlines initial patent review and helps identify
                 potentially relevant documents for deeper analysis.
             </div>
-
         </div>
         """,
         unsafe_allow_html=True
@@ -407,7 +412,6 @@ with col3:
 st.markdown(
     """
     <hr class="footer-rule">
-
     <div class="footer">
         Internal IP Research Platform
     </div>
