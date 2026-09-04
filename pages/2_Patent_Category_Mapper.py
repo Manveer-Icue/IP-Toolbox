@@ -18,11 +18,21 @@ st.set_page_config(
     layout="wide"
 )
 
+
+# ============================================================
+# STYLE
+# ============================================================
+
 st.markdown(
     """
 <style>
-[data-testid="stSidebar"] {display: none;}
-[data-testid="collapsedControl"] {display: none;}
+[data-testid="stSidebar"] {
+    display: none;
+}
+
+[data-testid="collapsedControl"] {
+    display: none;
+}
 
 .stApp {
     background-color: var(--background-color);
@@ -38,6 +48,11 @@ st.markdown(
 * {
     font-family: 'Inter', sans-serif;
 }
+
+
+/* ============================================================
+   HEADER
+   ============================================================ */
 
 .main-title {
     font-size: 2.35rem;
@@ -60,6 +75,39 @@ st.markdown(
     opacity: 0.70;
     line-height: 1.65;
 }
+
+
+/* ============================================================
+   PROCESSING INFORMATION
+   ============================================================ */
+
+.processing-box {
+    margin-top: 1.25rem;
+    margin-bottom: 2.2rem;
+    padding: 1.15rem 1.5rem;
+    background-color: var(--secondary-background-color);
+    border: 1px solid rgba(128,128,128,0.20);
+    border-radius: 10px;
+}
+
+.processing-title {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.65rem;
+}
+
+.processing-list {
+    margin: 0;
+    padding-left: 1.35rem;
+    color: var(--text-color);
+    opacity: 0.70;
+    line-height: 1.65;
+}
+
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
 
 div[data-testid="stButton"] button {
     border-radius: 7px;
@@ -89,12 +137,22 @@ div[data-testid="stButton"] button[kind="primary"] span {
     color: #FFFFFF !important;
 }
 
+
+/* ============================================================
+   FILE UPLOADER
+   ============================================================ */
+
 [data-testid="stFileUploader"] {
     background-color: var(--secondary-background-color);
     border: 1px dashed rgba(128,128,128,0.30);
     border-radius: 10px;
     padding: 0.8rem 1rem;
 }
+
+
+/* ============================================================
+   DOWNLOAD BUTTON
+   ============================================================ */
 
 div[data-testid="stDownloadButton"] button {
     background-color: #EE3C18;
@@ -110,15 +168,46 @@ div[data-testid="stDownloadButton"] button span {
     color: #FFFFFF !important;
 }
 
+
+/* ============================================================
+   DIVIDERS
+   ============================================================ */
+
 hr {
     border-top: 1px solid rgba(128,128,128,0.22);
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 800px) {
+
+    .block-container {
+        padding-top: 2.5rem;
+    }
+
+    .main-title {
+        font-size: 2.1rem;
+    }
 }
 </style>
 """,
     unsafe_allow_html=True
 )
 
+
+# ============================================================
+# AUTHENTICATION
+# ============================================================
+
 require_password()
+
+
+# ============================================================
+# BACK TO HOME
+# ============================================================
 
 if st.button("← Back to Home"):
     st.switch_page("Home.py")
@@ -148,41 +237,26 @@ st.write(
 
 st.markdown(
     """
-    <div style="
-        margin-top: 1.25rem;
-        margin-bottom: 2.2rem;
-        padding: 1.15rem 1.5rem;
-        background-color: var(--secondary-background-color);
-        border: 1px solid rgba(128,128,128,0.20);
-        border-radius: 10px;
-    ">
-        <div style="
-            font-weight: 600;
-            margin-bottom: 0.65rem;
-            color: var(--text-color);
-        ">
-            Processing includes:
-        </div>
+<div class="processing-box">
 
-        <ul style="
-            margin: 0;
-            padding-left: 1.35rem;
-            color: var(--text-color);
-            opacity: 0.70;
-            line-height: 1.65;
-        ">
-            <li>Select the categorization column from the Excel headers</li>
-            <li>Identify single or multiple categories assigned to each patent</li>
-            <li>Use existing category columns when already present</li>
-            <li>Create new category columns when categories are not already added</li>
-            <li>Mark applicable patents with <strong>Y</strong></li>
-            <li>Case-insensitive and whitespace-insensitive category matching</li>
-            <li>Leave blank categorization cells unchanged</li>
-            <li>Preserve all existing Excel data and columns</li>
-            <li>Export the processed workbook as a new Excel file</li>
-        </ul>
-    </div>
-    """,
+<div class="processing-title">
+Processing includes:
+</div>
+
+<ul class="processing-list">
+<li>Select the categorization column from the Excel headers</li>
+<li>Identify single or multiple categories assigned to each patent</li>
+<li>Use existing category columns when already present</li>
+<li>Create new category columns when categories are not already added</li>
+<li>Mark applicable patents with <strong>Y</strong></li>
+<li>Case-insensitive and whitespace-insensitive category matching</li>
+<li>Leave blank categorization cells unchanged</li>
+<li>Preserve all existing Excel data and columns</li>
+<li>Export the processed workbook as a new Excel file</li>
+</ul>
+
+</div>
+""",
     unsafe_allow_html=True
 )
 
@@ -192,6 +266,7 @@ st.markdown(
 # ============================================================
 
 def clean_value(value):
+
     if value is None:
         return ""
 
@@ -208,6 +283,7 @@ def normalize_for_match(value):
     """
     Case-insensitive + whitespace-insensitive matching.
     """
+
     return re.sub(
         r"\s+",
         "",
@@ -217,7 +293,8 @@ def normalize_for_match(value):
 
 def split_categories(value):
     """
-    Categories can be separated by commas or line breaks.
+    Categories can be separated by commas,
+    semicolons, or line breaks.
     """
 
     value = clean_value(value)
@@ -345,7 +422,7 @@ def process_workbook(
     if categories_already_added:
 
         # Use existing columns only.
-        # Matching = case-insensitive +
+        # Matching is case-insensitive +
         # whitespace-insensitive.
 
         for col in range(
@@ -360,9 +437,10 @@ def process_workbook(
             if not header:
                 continue
 
-            category_columns[
-                normalize_for_match(header)
-            ] = col
+            key = normalize_for_match(header)
+
+            if key not in category_columns:
+                category_columns[key] = col
 
         unmatched_categories = []
 
