@@ -94,12 +94,6 @@ st.markdown(
    AVAILABLE TOOLS - HORIZONTAL SCROLL
    ============================================================ */
 
-/*
-   The tools remain in one horizontal row.
-   When more tools are added, the section becomes horizontally
-   scrollable instead of shrinking the cards.
-*/
-
 [data-testid="stHorizontalBlock"] {
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
@@ -108,8 +102,6 @@ st.markdown(
     padding-bottom: 1.2rem;
     scrollbar-width: thin;
 }
-
-/* Chrome / Edge / Safari scrollbar */
 
 [data-testid="stHorizontalBlock"]::-webkit-scrollbar {
     height: 7px;
@@ -130,8 +122,9 @@ st.markdown(
 
 
 /*
-   Keep each tool column at a fixed width so cards do not
-   become narrower as more tools are added.
+   Keep every tool column at a fixed width.
+   This prevents cards from becoming too narrow when
+   the browser window is reduced or more tools are added.
 */
 
 [data-testid="stHorizontalBlock"] > [data-testid="column"] {
@@ -149,7 +142,8 @@ st.markdown(
     border: 1px solid #E5E5E2;
     border-radius: 12px;
     padding: 1.65rem;
-    height: 340px;
+    min-height: 330px;
+    height: auto;
     box-sizing: border-box;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.035);
     transition:
@@ -318,7 +312,7 @@ div[data-testid="stButton"] button:focus {
    RESPONSIVE
    ============================================================ */
 
-@media (max-width: 800px) {
+@media (max-width: 900px) {
 
     .block-container {
         padding-top: 2.5rem;
@@ -328,13 +322,19 @@ div[data-testid="stButton"] button:focus {
         font-size: 2.1rem;
     }
 
+    [data-testid="stHorizontalBlock"] {
+        gap: 1.25rem !important;
+        padding-bottom: 0.9rem;
+    }
+
     [data-testid="stHorizontalBlock"] > [data-testid="column"] {
-        flex: 0 0 260px !important;
-        min-width: 260px !important;
+        flex: 0 0 250px !important;
+        min-width: 250px !important;
     }
 
     .tool-card {
-        height: 340px;
+        min-height: 330px;
+        height: auto;
     }
 }
 
@@ -448,7 +448,9 @@ with col3:
     st.markdown(
         """
 <div class="tool-card tool-card-disabled">
-<div class="tool-name-box tool-name-box-disabled">FTO Claim Screening</div>
+<div class="tool-name-box tool-name-box-disabled">
+FTO Claim Screening
+</div>
 <div>
 <span class="status-pending">
 <span class="status-dot-pending"></span>
@@ -475,7 +477,9 @@ with col4:
     st.markdown(
         """
 <div class="tool-card tool-card-disabled">
-<div class="tool-name-box tool-name-box-disabled">Sample</div>
+<div class="tool-name-box tool-name-box-disabled">
+Sample
+</div>
 <div>
 <span class="status-pending">
 <span class="status-dot-pending"></span>
