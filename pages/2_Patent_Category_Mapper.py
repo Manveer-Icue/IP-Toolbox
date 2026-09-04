@@ -140,13 +140,51 @@ st.markdown(
 
 st.write(
     """
-    Converts category information stored in a single categorization
-    column into individual category columns and marks applicable
-    patents with **Y**.
+    Converts patent categorization information into individual
+    category columns, allowing each patent to be clearly mapped
+    to its applicable research categories.
     """
 )
 
-st.markdown("---")
+st.markdown(
+    """
+    <div style="
+        margin-top: 1.25rem;
+        margin-bottom: 2.2rem;
+        padding: 1.15rem 1.5rem;
+        background-color: var(--secondary-background-color);
+        border: 1px solid rgba(128,128,128,0.20);
+        border-radius: 10px;
+    ">
+        <div style="
+            font-weight: 600;
+            margin-bottom: 0.65rem;
+            color: var(--text-color);
+        ">
+            Processing includes:
+        </div>
+
+        <ul style="
+            margin: 0;
+            padding-left: 1.35rem;
+            color: var(--text-color);
+            opacity: 0.70;
+            line-height: 1.65;
+        ">
+            <li>Select the categorization column from the Excel headers</li>
+            <li>Identify single or multiple categories assigned to each patent</li>
+            <li>Use existing category columns when already present</li>
+            <li>Create new category columns when categories are not already added</li>
+            <li>Mark applicable patents with <strong>Y</strong></li>
+            <li>Case-insensitive and whitespace-insensitive category matching</li>
+            <li>Leave blank categorization cells unchanged</li>
+            <li>Preserve all existing Excel data and columns</li>
+            <li>Export the processed workbook as a new Excel file</li>
+        </ul>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 
 # ============================================================
