@@ -315,8 +315,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-col1, col2, col3 = st.columns(3, gap="large")
-
+col1, col2, col3, col4 = st.columns(4, gap="large")
 
 # ============================================================
 # TOOL 1: ASSIGNEE NORMALIZER
@@ -352,10 +351,44 @@ and ultimate parent identification.
 
 
 # ============================================================
-# TOOL 2: FTO Claim Screening
+# TOOL 2: PATENT CATEGORY MAPPER
 # ============================================================
 
 with col2:
+
+    st.markdown(
+        """
+<div class="tool-card">
+<div class="tool-name-box">Patent Category Mapper</div>
+<div>
+<span class="status-live">
+<span class="status-dot-live"></span>
+Live
+</span>
+</div>
+<div class="tool-desc" style="margin-top: 0.9rem;">
+Converts patent categorization data into individual
+category columns and marks applicable patents with Y.
+</div>
+</div>
+""",
+        unsafe_allow_html=True
+    )
+
+    if st.button(
+        "Open tool  →",
+        key="open_category_mapper"
+    ):
+        st.switch_page(
+            "pages/2_Patent_Category_Mapper.py"
+        )
+
+
+# ============================================================
+# TOOL 3: FTO CLAIM SCREENING
+# ============================================================
+
+with col3:
 
     st.markdown(
         """
@@ -368,7 +401,9 @@ In progress
 </span>
 </div>
 <div class="tool-desc-pending" style="margin-top: 0.9rem;">
-Supports freedom-to-operate research by helping researchers identify and evaluate relevant patent claims and supporting rationale.
+Supports freedom-to-operate research by helping researchers
+identify and evaluate relevant patent claims and supporting
+rationale.
 </div>
 </div>
 """,
@@ -377,10 +412,10 @@ Supports freedom-to-operate research by helping researchers identify and evaluat
 
 
 # ============================================================
-# TOOL 3: Sample
+# TOOL 4: SAMPLE
 # ============================================================
 
-with col3:
+with col4:
 
     st.markdown(
         """
@@ -399,8 +434,6 @@ New tool ideas arising from different research requirements.
 """,
         unsafe_allow_html=True
     )
-
-
 # ============================================================
 # FOOTER
 # ============================================================
