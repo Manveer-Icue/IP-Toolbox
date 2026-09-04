@@ -91,6 +91,56 @@ st.markdown(
 
 
 /* ============================================================
+   AVAILABLE TOOLS - HORIZONTAL SCROLL
+   ============================================================ */
+
+/*
+   The tools remain in one horizontal row.
+   When more tools are added, the section becomes horizontally
+   scrollable instead of shrinking the cards.
+*/
+
+[data-testid="stHorizontalBlock"] {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    gap: 1.5rem !important;
+    padding-bottom: 1.2rem;
+    scrollbar-width: thin;
+}
+
+/* Chrome / Edge / Safari scrollbar */
+
+[data-testid="stHorizontalBlock"]::-webkit-scrollbar {
+    height: 7px;
+}
+
+[data-testid="stHorizontalBlock"]::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+[data-testid="stHorizontalBlock"]::-webkit-scrollbar-thumb {
+    background: #D2D2CF;
+    border-radius: 10px;
+}
+
+[data-testid="stHorizontalBlock"]::-webkit-scrollbar-thumb:hover {
+    background: #B9B9B5;
+}
+
+
+/*
+   Keep each tool column at a fixed width so cards do not
+   become narrower as more tools are added.
+*/
+
+[data-testid="stHorizontalBlock"] > [data-testid="column"] {
+    flex: 0 0 260px !important;
+    min-width: 260px !important;
+}
+
+
+/* ============================================================
    TOOL CARDS
    ============================================================ */
 
@@ -99,7 +149,7 @@ st.markdown(
     border: 1px solid #E5E5E2;
     border-radius: 12px;
     padding: 1.65rem;
-    height: 260px;
+    height: 340px;
     box-sizing: border-box;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.035);
     transition:
@@ -220,7 +270,7 @@ st.markdown(
    ============================================================ */
 
 div[data-testid="stButton"] {
-    margin-top: 0.8rem;
+    margin-top: 0.65rem;
 }
 
 div[data-testid="stButton"] button {
@@ -278,9 +328,13 @@ div[data-testid="stButton"] button:focus {
         font-size: 2.1rem;
     }
 
+    [data-testid="stHorizontalBlock"] > [data-testid="column"] {
+        flex: 0 0 260px !important;
+        min-width: 260px !important;
+    }
+
     .tool-card {
-        height: auto;
-        min-height: 260px;
+        height: 340px;
     }
 }
 
@@ -316,6 +370,7 @@ st.markdown(
 )
 
 col1, col2, col3, col4 = st.columns(4, gap="large")
+
 
 # ============================================================
 # TOOL 1: ASSIGNEE NORMALIZER
@@ -434,6 +489,8 @@ New tool ideas arising from different research requirements.
 """,
         unsafe_allow_html=True
     )
+
+
 # ============================================================
 # FOOTER
 # ============================================================
