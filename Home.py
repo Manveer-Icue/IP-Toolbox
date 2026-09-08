@@ -193,15 +193,19 @@ st.markdown(
 .tool-name-area {
     height: 92px;
     min-height: 92px;
-
     display: flex;
     align-items: flex-start;
     flex-shrink: 0;
 }
 
 .tool-name-box {
-    display: inline-flex;
+    width: 100%;
+    min-height: 61px;
+    box-sizing: border-box;
+
+    display: flex;
     align-items: center;
+    justify-content: flex-start;
 
     background-color: #FFF0EC;
     color: #EE3C18;
@@ -215,9 +219,6 @@ st.markdown(
     font-weight: 600;
     line-height: 1.2;
     letter-spacing: -0.015em;
-
-    max-width: 100%;
-    box-sizing: border-box;
 }
 
 .tool-name-box-disabled {
