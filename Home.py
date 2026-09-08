@@ -191,11 +191,12 @@ st.markdown(
    ============================================================ */
 
 .tool-name-area {
-    height: 74px;
-    min-height: 74px;
+    height: 92px;
+    min-height: 92px;
 
     display: flex;
     align-items: flex-start;
+    flex-shrink: 0;
 }
 
 .tool-name-box {
@@ -216,6 +217,7 @@ st.markdown(
     letter-spacing: -0.015em;
 
     max-width: 100%;
+    box-sizing: border-box;
 }
 
 .tool-name-box-disabled {
@@ -235,6 +237,7 @@ st.markdown(
 
     display: flex;
     align-items: flex-start;
+    flex-shrink: 0;
 
     margin-bottom: 0.25rem;
 }
