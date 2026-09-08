@@ -369,7 +369,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-col1, col2, col3, col4 = st.columns(4, gap="large")
+col1, col2, col3, col4, col5 = st.columns(5, gap="large")
 
 
 # ============================================================
@@ -440,10 +440,45 @@ category columns and marks applicable patents with Y.
 
 
 # ============================================================
-# TOOL 3: FTO CLAIM SCREENING
+# TOOL 3: PATENT HYPERLINKER
 # ============================================================
 
 with col3:
+
+    st.markdown(
+        """
+<div class="tool-card">
+<div class="tool-name-box">Patent Hyperlinker</div>
+<div>
+<span class="status-live">
+<span class="status-dot-live"></span>
+Live
+</span>
+</div>
+<div class="tool-desc" style="margin-top: 0.9rem;">
+Creates clickable patent links using Google Patents,
+New Espacenet, or the original Orbit document link,
+with dynamic routing based on patent country.
+</div>
+</div>
+""",
+        unsafe_allow_html=True
+    )
+
+    if st.button(
+        "Open tool  →",
+        key="open_patent_hyperlinker"
+    ):
+        st.switch_page(
+            "pages/3_Patent_Hyperlinker.py"
+        )
+
+
+# ============================================================
+# TOOL 4: FTO CLAIM SCREENING
+# ============================================================
+
+with col4:
 
     st.markdown(
         """
@@ -469,10 +504,10 @@ rationale.
 
 
 # ============================================================
-# TOOL 4: SAMPLE
+# TOOL 5: SAMPLE
 # ============================================================
 
-with col4:
+with col5:
 
     st.markdown(
         """
