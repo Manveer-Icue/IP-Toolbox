@@ -99,7 +99,7 @@ st.markdown(
     overflow-x: auto !important;
     overflow-y: visible !important;
     gap: 1.5rem !important;
-    padding-bottom: 1.2rem;
+    padding-bottom: 0.5rem;
     scrollbar-width: thin;
 }
 
@@ -121,11 +121,9 @@ st.markdown(
 }
 
 
-/*
-   Keep every tool column at a fixed width.
-   This prevents cards from becoming too narrow when
-   the browser window is reduced or more tools are added.
-*/
+/* ============================================================
+   FIXED TOOL COLUMN WIDTH
+   ============================================================ */
 
 [data-testid="stHorizontalBlock"] > [data-testid="column"] {
     flex: 0 0 260px !important;
@@ -134,18 +132,37 @@ st.markdown(
 
 
 /* ============================================================
+   TOOL CARD WRAPPER
+   ============================================================ */
+
+.tool-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* ============================================================
    TOOL CARDS
    ============================================================ */
 
 .tool-card {
-    background-color: #FFFFFF;
-    border: 1px solid #E5E5E2;
-    border-radius: 12px;
-    padding: 1.65rem;
-    min-height: 330px;
-    height: auto;
+    width: 100%;
+    height: 390px;
+    min-height: 390px;
     box-sizing: border-box;
+
+    background-color: #FFFFFF;
+    border: 1px solid #E3E3E0;
+    border-radius: 12px;
+
+    padding: 1.5rem 1.5rem 1.35rem 1.5rem;
+
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.035);
+
+    display: flex;
+    flex-direction: column;
+
     transition:
         transform 0.18s ease,
         box-shadow 0.18s ease,
@@ -155,7 +172,7 @@ st.markdown(
 .tool-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 22px rgba(0, 0, 0, 0.07);
-    border-color: #D9D9D5;
+    border-color: #D8D8D4;
 }
 
 .tool-card-disabled {
@@ -170,22 +187,35 @@ st.markdown(
 
 
 /* ============================================================
-   TOOL NAME BOX
+   TOOL NAME AREA
    ============================================================ */
+
+.tool-name-area {
+    height: 74px;
+    min-height: 74px;
+
+    display: flex;
+    align-items: flex-start;
+}
 
 .tool-name-box {
     display: inline-flex;
     align-items: center;
+
     background-color: #FFF0EC;
     color: #EE3C18;
+
     border: 1px solid #FFD9D1;
     border-radius: 8px;
+
     padding: 0.65rem 0.9rem;
+
     font-size: 1rem;
     font-weight: 600;
     line-height: 1.2;
     letter-spacing: -0.015em;
-    margin-bottom: 0.9rem;
+
+    max-width: 100%;
 }
 
 .tool-name-box-disabled {
@@ -199,16 +229,31 @@ st.markdown(
    STATUS
    ============================================================ */
 
+.status-area {
+    height: 31px;
+    min-height: 31px;
+
+    display: flex;
+    align-items: flex-start;
+
+    margin-bottom: 0.25rem;
+}
+
 .status-live {
     display: inline-flex;
     align-items: center;
     gap: 5px;
+
     padding: 3px 8px;
+
     border-radius: 20px;
+
     background-color: #FFF0EC;
     color: #EE3C18;
+
     font-size: 0.66rem;
     font-weight: 600;
+
     letter-spacing: 0.04em;
     text-transform: uppercase;
 }
@@ -217,12 +262,17 @@ st.markdown(
     display: inline-flex;
     align-items: center;
     gap: 5px;
+
     padding: 3px 8px;
+
     border-radius: 20px;
+
     background-color: #F0F0EE;
     color: #85888C;
+
     font-size: 0.66rem;
     font-weight: 600;
+
     letter-spacing: 0.04em;
     text-transform: uppercase;
 }
@@ -230,14 +280,18 @@ st.markdown(
 .status-dot-live {
     width: 5px;
     height: 5px;
+
     border-radius: 50%;
+
     background-color: #EE3C18;
 }
 
 .status-dot-pending {
     width: 5px;
     height: 5px;
+
     border-radius: 50%;
+
     background-color: #9A9DA0;
 }
 
@@ -250,32 +304,59 @@ st.markdown(
     font-size: 0.88rem;
     line-height: 1.6;
     color: #74787D;
+
+    flex: 1;
+
+    padding-top: 0.1rem;
 }
 
 .tool-desc-pending {
     font-size: 0.88rem;
     line-height: 1.6;
     color: #96999D;
+
+    flex: 1;
+
+    padding-top: 0.1rem;
 }
 
 
 /* ============================================================
-   BUTTON
+   BUTTON AREA
+   ============================================================ */
+
+.tool-button-area {
+    height: 42px;
+    min-height: 42px;
+
+    display: flex;
+    align-items: flex-end;
+}
+
+
+/* ============================================================
+   STREAMLIT BUTTON
    ============================================================ */
 
 div[data-testid="stButton"] {
-    margin-top: 0.65rem;
+    margin-top: 0.7rem;
+    margin-bottom: 0;
 }
 
 div[data-testid="stButton"] button {
     background-color: #EE3C18;
     color: #FFFFFF;
+
     border: 1px solid #EE3C18;
     border-radius: 7px;
+
     font-size: 0.84rem;
     font-weight: 600;
+
     padding: 0.42rem 0.85rem;
+
     min-height: 36px;
+
     transition: all 0.15s ease;
 }
 
@@ -298,6 +379,7 @@ div[data-testid="stButton"] button:focus {
 .footer-rule {
     border: none;
     border-top: 1px solid #E2E2DF;
+
     margin-top: 2.7rem;
     margin-bottom: 1.1rem;
 }
@@ -324,7 +406,7 @@ div[data-testid="stButton"] button:focus {
 
     [data-testid="stHorizontalBlock"] {
         gap: 1.25rem !important;
-        padding-bottom: 0.9rem;
+        padding-bottom: 0.5rem;
     }
 
     [data-testid="stHorizontalBlock"] > [data-testid="column"] {
@@ -333,8 +415,8 @@ div[data-testid="stButton"] button:focus {
     }
 
     .tool-card {
-        min-height: 330px;
-        height: auto;
+        height: 390px;
+        min-height: 390px;
     }
 }
 
@@ -380,19 +462,31 @@ with col1:
 
     st.markdown(
         """
+<div class="tool-wrapper">
+
 <div class="tool-card">
-<div class="tool-name-box">Assignee Normalizer</div>
-<div>
+
+<div class="tool-name-area">
+<div class="tool-name-box">
+Assignee Normalizer
+</div>
+</div>
+
+<div class="status-area">
 <span class="status-live">
 <span class="status-dot-live"></span>
 Live
 </span>
 </div>
-<div class="tool-desc" style="margin-top: 0.9rem;">
+
+<div class="tool-desc">
 Resolves inconsistent parent assignee names using AI,
 including corporate entity matching, subsidiary detection,
 and ultimate parent identification.
 </div>
+
+</div>
+
 </div>
 """,
         unsafe_allow_html=True
@@ -413,18 +507,30 @@ with col2:
 
     st.markdown(
         """
+<div class="tool-wrapper">
+
 <div class="tool-card">
-<div class="tool-name-box">Patent Category Mapper</div>
-<div>
+
+<div class="tool-name-area">
+<div class="tool-name-box">
+Patent Category Mapper
+</div>
+</div>
+
+<div class="status-area">
 <span class="status-live">
 <span class="status-dot-live"></span>
 Live
 </span>
 </div>
-<div class="tool-desc" style="margin-top: 0.9rem;">
+
+<div class="tool-desc">
 Converts patent categorization data into individual
 category columns and marks applicable patents with Y.
 </div>
+
+</div>
+
 </div>
 """,
         unsafe_allow_html=True
@@ -447,19 +553,31 @@ with col3:
 
     st.markdown(
         """
+<div class="tool-wrapper">
+
 <div class="tool-card">
-<div class="tool-name-box">Patent Hyperlinker</div>
-<div>
+
+<div class="tool-name-area">
+<div class="tool-name-box">
+Patent Hyperlinker
+</div>
+</div>
+
+<div class="status-area">
 <span class="status-live">
 <span class="status-dot-live"></span>
 Live
 </span>
 </div>
-<div class="tool-desc" style="margin-top: 0.9rem;">
+
+<div class="tool-desc">
 Creates clickable patent links using Google Patents,
 New Espacenet, or the original Orbit document link,
 with dynamic routing based on patent country.
 </div>
+
+</div>
+
 </div>
 """,
         unsafe_allow_html=True
@@ -482,21 +600,31 @@ with col4:
 
     st.markdown(
         """
+<div class="tool-wrapper">
+
 <div class="tool-card tool-card-disabled">
+
+<div class="tool-name-area">
 <div class="tool-name-box tool-name-box-disabled">
 FTO Claim Screening
 </div>
-<div>
+</div>
+
+<div class="status-area">
 <span class="status-pending">
 <span class="status-dot-pending"></span>
 In progress
 </span>
 </div>
-<div class="tool-desc-pending" style="margin-top: 0.9rem;">
+
+<div class="tool-desc-pending">
 Supports freedom-to-operate research by helping researchers
 identify and evaluate relevant patent claims and supporting
 rationale.
 </div>
+
+</div>
+
 </div>
 """,
         unsafe_allow_html=True
@@ -511,19 +639,29 @@ with col5:
 
     st.markdown(
         """
+<div class="tool-wrapper">
+
 <div class="tool-card tool-card-disabled">
+
+<div class="tool-name-area">
 <div class="tool-name-box tool-name-box-disabled">
 Sample
 </div>
-<div>
+</div>
+
+<div class="status-area">
 <span class="status-pending">
 <span class="status-dot-pending"></span>
 Coming soon
 </span>
 </div>
-<div class="tool-desc-pending" style="margin-top: 0.9rem;">
+
+<div class="tool-desc-pending">
 New tool ideas arising from different research requirements.
 </div>
+
+</div>
+
 </div>
 """,
         unsafe_allow_html=True
