@@ -11,20 +11,20 @@ st.set_page_config(
 # HIDE SIDEBAR
 # ============================================================
 
-# st.markdown(
-#     """
-# <style>
-# [data-testid="stSidebar"] {
-#     display: none;
-# }
+st.markdown(
+    """
+<style>
+[data-testid="stSidebar"] {
+    display: none;
+}
 
-# [data-testid="collapsedControl"] {
-#     display: none;
-# }
-# </style>
-# """,
-#     unsafe_allow_html=True
-# )
+[data-testid="collapsedControl"] {
+    display: none;
+}
+</style>
+""",
+    unsafe_allow_html=True
+)
 
 require_password()
 
