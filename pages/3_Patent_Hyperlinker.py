@@ -7,123 +7,6 @@ import pandas as pd
 
 from auth import require_password
 
-# ============================================================
-# FUNCTIONS
-# ============================================================
-
-def clean_value(value):
-    """Return a clean string representation of an Excel cell."""
-
-    if value is None:
-        return ""
-
-    if isinstance(value, float):
-
-        if value.is_integer():
-            return str(int(value))
-
-    return str(value).strip()
-
-
-def normalize_patent_number(value):
-    """
-    Normalize a patent number for country detection
-    and URL construction.
-    """
-
-    value = clean_value(value)
-
-    return re.sub(
-        r"[\s,./-]+",
-        "",
-        value
-    ).upper()
-
-
-def get_country_code(patent_number):
-    """Extract the two-letter country code."""
-
-    normalized = normalize_patent_number(
-        patent_number
-    )
-
-    match = re.match(
-        r"^([A-Z]{2})",
-        normalized
-    )
-
-    if match:
-        return match.group(1)
-
-    return ""
-
-
-def google_patents_url(patent_number):
-    """Create Google Patents URL."""
-
-    patent = normalize_patent_number(
-        patent_number
-    )
-
-    return (
-        f"https://patents.google.com/patent/"
-        f"{quote(patent, safe='')}/en"
-    )
-
-
-def espacenet_url(patent_number):
-    """Create New Espacenet search URL."""
-
-    patent = normalize_patent_number(
-        patent_number
-    )
-
-    query = quote(
-        f"pn={patent}",
-        safe=""
-    )
-
-    return (
-        f"https://worldwide.espacenet.com/patent/search"
-        f"?q={query}"
-    )
-
-
-def get_orbit_hyperlink(cell):
-    """
-    Extract the actual hyperlink target from an Excel cell.
-
-    The visible text is ignored.
-    """
-
-    if cell.hyperlink is None:
-        return ""
-
-    target = cell.hyperlink.target
-
-    if target:
-        return target
-
-    return ""
-
-
-def create_target_url(
-    patent_number,
-    mode,
-    orbit_link
-):
-    """
-    Determine the destination URL.
-    """
-
-    patent = normalize_patent_number(
-        patent_number
-    )
-
-    country = get_country_code(
-        patent
-    )
-
 
 # ============================================================
 # PAGE CONFIGURATION
@@ -954,6 +837,125 @@ if run_button:
 
         st.exception(e)
 
+    # ============================================================
+    # FUNCTIONS
+    # ============================================================
+    
+    def clean_value(value):
+        """Return a clean string representation of an Excel cell."""
+    
+        if value is None:
+            return ""
+    
+        if isinstance(value, float):
+    
+            if value.is_integer():
+                return str(int(value))
+    
+        return str(value).strip()
+    
+    
+    def normalize_patent_number(value):
+        """
+        Normalize a patent number for country detection
+        and URL construction.
+        """
+    
+        value = clean_value(value)
+    
+        return re.sub(
+            r"[\s,./-]+",
+            "",
+            value
+        ).upper()
+    
+    
+    def get_country_code(patent_number):
+        """Extract the two-letter country code."""
+    
+        normalized = normalize_patent_number(
+            patent_number
+        )
+    
+        match = re.match(
+            r"^([A-Z]{2})",
+            normalized
+        )
+    
+        if match:
+            return match.group(1)
+    
+        return ""
+    
+    
+    def google_patents_url(patent_number):
+        """Create Google Patents URL."""
+    
+        patent = normalize_patent_number(
+            patent_number
+        )
+    
+        return (
+            f"https://patents.google.com/patent/"
+            f"{quote(patent, safe='')}/en"
+        )
+    
+    
+    def espacenet_url(patent_number):
+        """Create New Espacenet search URL."""
+    
+        patent = normalize_patent_number(
+            patent_number
+        )
+    
+        query = quote(
+            f"pn={patent}",
+            safe=""
+        )
+    
+        return (
+            f"https://worldwide.espacenet.com/patent/search"
+            f"?q={query}"
+        )
+    
+    
+    def get_orbit_hyperlink(cell):
+        """
+        Extract the actual hyperlink target from an Excel cell.
+    
+        The visible text is ignored.
+        """
+    
+        if cell.hyperlink is None:
+            return ""
+    
+        target = cell.hyperlink.target
+    
+        if target:
+            return target
+    
+        return ""
+    
+    
+    def create_target_url(
+        patent_number,
+        mode,
+        orbit_link
+    ):
+        """
+        Determine the destination URL.
+        """
+    
+        patent = normalize_patent_number(
+            patent_number
+        )
+    
+        country = get_country_code(
+            patent
+        )
+    
+    
+        
     # --------------------------------------------------------
     # GOOGLE PATENTS
     # --------------------------------------------------------
