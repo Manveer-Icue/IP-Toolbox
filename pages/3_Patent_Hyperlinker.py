@@ -3,6 +3,7 @@ from openpyxl import load_workbook
 from io import BytesIO
 from urllib.parse import quote
 import re
+import textwrap
 
 from auth import require_password
 
@@ -126,9 +127,7 @@ st.markdown(
     margin-top: 0.9rem;
     margin-bottom: 2.2rem;
     padding: 1.15rem 1.5rem;
-
     background-color: var(--secondary-background-color);
-
     border: 1px solid rgba(128,128,128,0.20);
     border-radius: 10px;
 }
@@ -163,21 +162,16 @@ st.markdown(
 .input-table th {
     text-align: left;
     padding: 0.65rem 0.8rem;
-
     background-color: rgba(128,128,128,0.08);
-
     color: var(--text-color);
     font-weight: 600;
-
     border: 1px solid rgba(128,128,128,0.18);
 }
 
 .input-table td {
     padding: 0.65rem 0.8rem;
-
     color: var(--text-color);
     opacity: 0.72;
-
     border: 1px solid rgba(128,128,128,0.15);
 }
 
@@ -235,15 +229,6 @@ div[data-testid="stButton"] button[kind="primary"] span {
 /* ============================================================
    SUMMARY
    ============================================================ */
-
-.summary-box {
-    padding: 1rem 1.25rem;
-    border: 1px solid rgba(128,128,128,0.20);
-    border-radius: 10px;
-    background-color: var(--secondary-background-color);
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-}
 
 .summary-number {
     font-size: 1.35rem;
@@ -353,10 +338,9 @@ st.write(
 # PROCESSING INFORMATION
 # ============================================================
 
-st.markdown(
+processing_html = textwrap.dedent(
     """
     <div class="processing-box">
-
         <div class="processing-title">
             Processing includes:
         </div>
@@ -380,9 +364,12 @@ st.markdown(
         <div class="processing-item">
             • Only the PUBLICATION NUMBER cells are updated with hyperlinks.
         </div>
-
     </div>
-    """,
+    """
+).strip()
+
+st.markdown(
+    processing_html,
     unsafe_allow_html=True
 )
 
@@ -391,7 +378,7 @@ st.markdown(
 # INPUT FILE FORMAT
 # ============================================================
 
-st.markdown(
+input_format_html = textwrap.dedent(
     """
     <div class="input-format-box">
 
@@ -430,7 +417,11 @@ st.markdown(
         </div>
 
     </div>
-    """,
+    """
+).strip()
+
+st.markdown(
+    input_format_html,
     unsafe_allow_html=True
 )
 
@@ -524,6 +515,7 @@ def get_orbit_hyperlink(cell):
     The visible text is ignored.
 
     Example:
+
         Visible text: Open
         Actual hyperlink: https://...
 
