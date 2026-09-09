@@ -201,6 +201,13 @@ def process_workbook(
 ):
     """
     Process uploaded workbook.
+
+    Adds a NOT LINKED PATENTS column immediately next to
+    PUBLICATION NUMBER.
+
+    Only Indian patents that cannot be linked because an
+    actual Orbit hyperlink is unavailable are marked
+    NOT LINKED.
     """
 
     uploaded_file.seek(0)
@@ -235,12 +242,21 @@ def process_workbook(
             headers[value] = col
 
 
+    if patent_column not in headers:
+        raise ValueError(
+            f'Publication number column "{patent_column}" was not found.'
+        )
+
+
     patent_col_index = headers[
         patent_column
     ]
 
 
+    # --------------------------------------------------------
     # ORBIT LINK is optional
+    # --------------------------------------------------------
+
     if orbit_column and orbit_column != "None":
 
         orbit_col_index = headers.get(
@@ -250,6 +266,102 @@ def process_workbook(
     else:
 
         orbit_col_index = None
+
+
+    # --------------------------------------------------------
+    # Add NOT LINKED PATENTS column
+    # immediately next to PUBLICATION NUMBER
+    # --------------------------------------------------------
+
+    existing_status_index = None
+
+    for col in range(
+        1,
+        worksheet.max_column + 1
+    ):
+
+        header_value = clean_value(
+            worksheet.cell(
+                1,
+                col
+            ).value
+        )
+
+        if (
+            header_value.casefold()
+            == "not linked patents"
+        ):
+
+            existing_status_index = col
+
+            break
+
+
+    if existing_status_index is not None:
+
+        # Use the existing status column if it is already
+        # immediately next to the publication number.
+        if existing_status_index == patent_col_index + 1:
+
+            status_col_index = existing_status_index
+
+        else:
+
+            # Remove an existing status column elsewhere
+            # so that the output always places it next to
+            # PUBLICATION NUMBER.
+            worksheet.delete_cols(
+                existing_status_index,
+                1
+            )
+
+            # If the deleted column was before the patent
+            # column, its index has shifted left.
+            if existing_status_index < patent_col_index:
+
+                patent_col_index -= 1
+
+            # Recalculate Orbit column after deletion.
+            if orbit_col_index is not None:
+
+                if existing_status_index < orbit_col_index:
+
+                    orbit_col_index -= 1
+
+                elif existing_status_index == orbit_col_index:
+
+                    orbit_col_index = None
+
+            worksheet.insert_cols(
+                patent_col_index + 1,
+                1
+            )
+
+            status_col_index = patent_col_index + 1
+
+    else:
+
+        worksheet.insert_cols(
+            patent_col_index + 1,
+            1
+        )
+
+        status_col_index = patent_col_index + 1
+
+
+        # Inserting before the Orbit column shifts its index.
+        if (
+            orbit_col_index is not None
+            and orbit_col_index > patent_col_index
+        ):
+
+            orbit_col_index += 1
+
+
+    worksheet.cell(
+        1,
+        status_col_index
+    ).value = "NOT LINKED PATENTS"
 
 
     # --------------------------------------------------------
@@ -279,6 +391,14 @@ def process_workbook(
             row,
             patent_col_index
         )
+
+        status_cell = worksheet.cell(
+            row,
+            status_col_index
+        )
+
+        # Keep the status column blank by default.
+        status_cell.value = ""
 
 
         if orbit_col_index is not None:
@@ -321,6 +441,10 @@ def process_workbook(
         )
 
 
+        # ----------------------------------------------------
+        # Patent cannot be linked
+        # ----------------------------------------------------
+
         if not target_url:
 
             skipped_rows += 1
@@ -328,6 +452,8 @@ def process_workbook(
             if destination == "Missing Orbit Link":
 
                 missing_orbit_count += 1
+
+                status_cell.value = "NOT LINKED"
 
             continue
 
@@ -743,6 +869,8 @@ with st.container(border=True):
 <li>Uses the <b>PUBLICATION NUMBER</b> cell as the hyperlink target.</li>
 <li>Reads the actual hyperlink behind the <b>ORBIT LINK</b> cell, regardless of whether it displays <b>"Open"</b> or a patent number.</li>
 <li>Dynamic mode sends <b>US patents to Google Patents</b>, <b>Indian patents to their original Orbit link</b>, and <b>all other patents to New Espacenet</b>.</li>
+<li>Adds a <b>NOT LINKED PATENTS</b> column immediately next to <b>PUBLICATION NUMBER</b>.</li>
+<li>Indian patents without an available actual Orbit hyperlink are marked <b>NOT LINKED</b>.</li>
 <li>Preserves the existing workbook data and columns.</li>
 <li>Only the <b>PUBLICATION NUMBER</b> cells are updated with hyperlinks.</li>
 </ul>
@@ -752,7 +880,7 @@ with st.container(border=True):
 
 
 # ============================================================
-# INPUT FILE FORMAT
+# INPUT FORMAT
 # ============================================================
 
 with st.container(border=True):
@@ -1058,7 +1186,8 @@ if uploaded_file is not None:
 
                 st.info(
                     "Dynamic mode: US → Google Patents | "
-                    "IN → Original Orbit Link (requires ORBIT LINK column) | "
+                    "IN → Original Orbit Link when available; "
+                    "if unavailable → NOT LINKED | "
                     "All other patents → New Espacenet"
                 )
 
@@ -1067,6 +1196,7 @@ if uploaded_file is not None:
                 st.info(
                     "Dynamic mode: US → Google Patents | "
                     "IN → Original Orbit Link | "
+                    "if unavailable → NOT LINKED | "
                     "All other patents → New Espacenet"
                 )
 
@@ -1232,7 +1362,8 @@ if run_button:
             st.warning(
                 f'{stats["missing_orbit_count"]:,} Indian patent(s) '
                 f'could not be hyperlinked because no actual '
-                f'ORBIT LINK was available.'
+                f'ORBIT LINK was available. These are marked '
+                f'"NOT LINKED" in the NOT LINKED PATENTS column.'
             )
 
 
