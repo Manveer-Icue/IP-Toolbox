@@ -97,11 +97,17 @@ st.markdown(
 [data-testid="stHorizontalBlock"] {
     display: flex !important;
     flex-wrap: nowrap !important;
+
     overflow-x: auto !important;
     overflow-y: hidden !important;
+
     gap: 1.5rem !important;
+
     padding-bottom: 0.8rem;
+
     width: 100% !important;
+    max-width: 100% !important;
+
     scrollbar-width: thin;
 }
 
@@ -129,10 +135,15 @@ st.markdown(
 
 [data-testid="stHorizontalBlock"] > [data-testid="column"] {
     flex: 0 0 260px !important;
+    flex-basis: 260px !important;
+
     width: 260px !important;
     min-width: 260px !important;
     max-width: 260px !important;
+
     flex-shrink: 0 !important;
+
+    overflow: visible !important;
 }
 
 
@@ -141,9 +152,13 @@ st.markdown(
    ============================================================ */
 
 .tool-wrapper {
-    width: 100%;
+    width: 260px;
+    min-width: 260px;
+
     display: flex;
     flex-direction: column;
+
+    overflow: visible;
 }
 
 
@@ -153,6 +168,9 @@ st.markdown(
 
 .tool-card {
     width: 260px;
+    min-width: 260px;
+    max-width: 260px;
+
     height: 390px;
     min-height: 390px;
     max-height: 390px;
@@ -427,19 +445,31 @@ div[data-testid="stButton"] button:focus {
 
     [data-testid="stHorizontalBlock"] {
         gap: 1.25rem !important;
-        padding-bottom: 0.5rem;
     }
 
     [data-testid="stHorizontalBlock"] > [data-testid="column"] {
         flex: 0 0 260px !important;
+        flex-basis: 260px !important;
+
         width: 260px !important;
         min-width: 260px !important;
         max-width: 260px !important;
+
         flex-shrink: 0 !important;
+
+        overflow: visible !important;
+    }
+
+    .tool-wrapper {
+        width: 260px;
+        min-width: 260px;
     }
 
     .tool-card {
         width: 260px;
+        min-width: 260px;
+        max-width: 260px;
+
         height: 390px;
         min-height: 390px;
         max-height: 390px;
