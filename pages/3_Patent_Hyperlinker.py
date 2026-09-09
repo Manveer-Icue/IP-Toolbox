@@ -9,6 +9,382 @@ from auth import require_password
 
 
 # ============================================================
+# FUNCTIONS
+# ============================================================
+
+def clean_value(value):
+    """Return a clean string representation of an Excel cell."""
+
+    if value is None:
+        return ""
+
+    if isinstance(value, float):
+        if value.is_integer():
+            return str(int(value))
+
+    return str(value).strip()
+
+
+def normalize_patent_number(value):
+    """
+    Normalize a patent number for country detection
+    and URL construction.
+    """
+
+    value = clean_value(value)
+
+    return re.sub(
+        r"[\s,./-]+",
+        "",
+        value
+    ).upper()
+
+
+def get_country_code(patent_number):
+    """Extract the two-letter country code."""
+
+    normalized = normalize_patent_number(
+        patent_number
+    )
+
+    match = re.match(
+        r"^([A-Z]{2})",
+        normalized
+    )
+
+    if match:
+        return match.group(1)
+
+    return ""
+
+
+def google_patents_url(patent_number):
+    """Create Google Patents URL."""
+
+    patent = normalize_patent_number(
+        patent_number
+    )
+
+    return (
+        f"https://patents.google.com/patent/"
+        f"{quote(patent, safe='')}/en"
+    )
+
+
+def espacenet_url(patent_number):
+    """Create New Espacenet search URL."""
+
+    patent = normalize_patent_number(
+        patent_number
+    )
+
+    query = quote(
+        f"pn={patent}",
+        safe=""
+    )
+
+    return (
+        f"https://worldwide.espacenet.com/patent/search"
+        f"?q={query}"
+    )
+
+
+def get_orbit_hyperlink(cell):
+    """
+    Extract the actual hyperlink target from an Excel cell.
+
+    The visible text is ignored.
+    """
+
+    if cell.hyperlink is None:
+        return ""
+
+    target = cell.hyperlink.target
+
+    if target:
+        return target
+
+    return ""
+
+
+def create_target_url(
+    patent_number,
+    mode,
+    orbit_link
+):
+    """
+    Determine the destination URL.
+    """
+
+    patent = normalize_patent_number(
+        patent_number
+    )
+
+    country = get_country_code(
+        patent
+    )
+
+
+    # --------------------------------------------------------
+    # GOOGLE PATENTS
+    # --------------------------------------------------------
+
+    if mode == "Google Patents":
+
+        return (
+            google_patents_url(patent),
+            "Google Patents"
+        )
+
+
+    # --------------------------------------------------------
+    # NEW ESPACENET
+    # --------------------------------------------------------
+
+    if mode == "New Espacenet":
+
+        return (
+            espacenet_url(patent),
+            "New Espacenet"
+        )
+
+
+    # --------------------------------------------------------
+    # DYNAMIC
+    # --------------------------------------------------------
+
+    if mode == "Dynamic":
+
+        if country == "US":
+
+            return (
+                google_patents_url(patent),
+                "Google Patents"
+            )
+
+
+        if country == "IN":
+
+            if orbit_link:
+
+                return (
+                    orbit_link,
+                    "Original Orbit Link"
+                )
+
+            return (
+                "",
+                "Missing Orbit Link"
+            )
+
+
+        return (
+            espacenet_url(patent),
+            "New Espacenet"
+        )
+
+
+    return (
+        "",
+        "No Link"
+    )
+
+
+def process_workbook(
+    uploaded_file,
+    patent_column,
+    orbit_column,
+    mode
+):
+    """
+    Process uploaded workbook.
+    """
+
+    uploaded_file.seek(0)
+
+    workbook = load_workbook(
+        uploaded_file,
+        keep_links=True
+    )
+
+    worksheet = workbook.active
+
+
+    # --------------------------------------------------------
+    # Find headers
+    # --------------------------------------------------------
+
+    headers = {}
+
+    for col in range(
+        1,
+        worksheet.max_column + 1
+    ):
+
+        value = clean_value(
+            worksheet.cell(
+                1,
+                col
+            ).value
+        )
+
+        if value:
+            headers[value] = col
+
+
+    patent_col_index = headers[
+        patent_column
+    ]
+
+    orbit_col_index = headers[
+        orbit_column
+    ]
+
+
+    # --------------------------------------------------------
+    # Statistics
+    # --------------------------------------------------------
+
+    total_rows = 0
+    linked_rows = 0
+    skipped_rows = 0
+
+    google_count = 0
+    espacenet_count = 0
+    orbit_count = 0
+    missing_orbit_count = 0
+
+
+    # --------------------------------------------------------
+    # Process rows
+    # --------------------------------------------------------
+
+    for row in range(
+        2,
+        worksheet.max_row + 1
+    ):
+
+        patent_cell = worksheet.cell(
+            row,
+            patent_col_index
+        )
+
+        orbit_cell = worksheet.cell(
+            row,
+            orbit_col_index
+        )
+
+        patent_number = clean_value(
+            patent_cell.value
+        )
+
+
+        if not patent_number:
+            continue
+
+
+        total_rows += 1
+
+
+        orbit_link = get_orbit_hyperlink(
+            orbit_cell
+        )
+
+
+        target_url, destination = create_target_url(
+            patent_number,
+            mode,
+            orbit_link
+        )
+
+
+        if not target_url:
+
+            skipped_rows += 1
+
+            if destination == "Missing Orbit Link":
+                missing_orbit_count += 1
+
+            continue
+
+
+        # ----------------------------------------------------
+        # Remove existing hyperlink
+        # ----------------------------------------------------
+
+        patent_cell.hyperlink = None
+
+
+        # ----------------------------------------------------
+        # Add new hyperlink
+        # ----------------------------------------------------
+
+        patent_cell.hyperlink = target_url
+
+        patent_cell.value = patent_number
+
+        patent_cell.style = "Hyperlink"
+
+
+        linked_rows += 1
+
+
+        # ----------------------------------------------------
+        # Statistics
+        # ----------------------------------------------------
+
+        if destination == "Google Patents":
+
+            google_count += 1
+
+        elif destination == "New Espacenet":
+
+            espacenet_count += 1
+
+        elif destination == "Original Orbit Link":
+
+            orbit_count += 1
+
+
+    # --------------------------------------------------------
+    # Excel usability
+    # --------------------------------------------------------
+
+    worksheet.freeze_panes = "A2"
+
+    if worksheet.max_row >= 1:
+
+        worksheet.auto_filter.ref = (
+            worksheet.dimensions
+        )
+
+
+    # --------------------------------------------------------
+    # Save
+    # --------------------------------------------------------
+
+    output = BytesIO()
+
+    workbook.save(output)
+
+    output.seek(0)
+
+
+    statistics = {
+        "total_rows": total_rows,
+        "linked_rows": linked_rows,
+        "skipped_rows": skipped_rows,
+        "google_count": google_count,
+        "espacenet_count": espacenet_count,
+        "orbit_count": orbit_count,
+        "missing_orbit_count": missing_orbit_count,
+    }
+
+
+    return output, statistics
+
+
+# ============================================================
 # PAGE CONFIGURATION
 # ============================================================
 
@@ -358,6 +734,7 @@ with st.container(border=True):
         unsafe_allow_html=True
     )
 
+
     input_example = pd.DataFrame(
         {
             "PUBLICATION NUMBER": [
@@ -375,7 +752,7 @@ with st.container(border=True):
 
 
     # --------------------------------------------------------
-    # Styled example table
+    # Styled Example Table
     # --------------------------------------------------------
 
     styled_table = (
@@ -436,7 +813,10 @@ with st.container(border=True):
         .hide(axis="index")
     )
 
-    st.table(styled_table)
+
+    st.table(
+        styled_table
+    )
 
 
     st.markdown(
@@ -490,6 +870,7 @@ if uploaded_file is not None:
 
         available_columns = []
 
+
         for col in range(
             1,
             preview_sheet.max_column + 1
@@ -504,6 +885,7 @@ if uploaded_file is not None:
 
             if value:
                 available_columns.append(value)
+
 
         preview_workbook.close()
 
@@ -532,6 +914,7 @@ if uploaded_file is not None:
 
             default_patent_index = 0
 
+
             for idx, name in enumerate(
                 available_columns
             ):
@@ -546,6 +929,7 @@ if uploaded_file is not None:
                 ]:
 
                     default_patent_index = idx
+
                     break
 
 
@@ -560,6 +944,7 @@ if uploaded_file is not None:
 
             default_orbit_index = 0
 
+
             for idx, name in enumerate(
                 available_columns
             ):
@@ -570,6 +955,7 @@ if uploaded_file is not None:
                     )
                 )
 
+
                 if normalized_name in [
                     "ORBITLINK",
                     "DOCUMENTLINK",
@@ -577,6 +963,7 @@ if uploaded_file is not None:
                 ]:
 
                     default_orbit_index = idx
+
                     break
 
 
@@ -594,6 +981,7 @@ if uploaded_file is not None:
         st.markdown(
             "### Linking Mode"
         )
+
 
         mode = st.selectbox(
             "Select hyperlinking mode",
@@ -694,6 +1082,7 @@ if run_button:
         st.markdown(
             "### Processing Summary"
         )
+
 
         st1, st2, st3, st4 = st.columns(4)
 
@@ -836,382 +1225,3 @@ if run_button:
         )
 
         st.exception(e)
-
-    # ============================================================
-    # FUNCTIONS
-    # ============================================================
-    
-    def clean_value(value):
-        """Return a clean string representation of an Excel cell."""
-    
-        if value is None:
-            return ""
-    
-        if isinstance(value, float):
-    
-            if value.is_integer():
-                return str(int(value))
-    
-        return str(value).strip()
-    
-    
-    def normalize_patent_number(value):
-        """
-        Normalize a patent number for country detection
-        and URL construction.
-        """
-    
-        value = clean_value(value)
-    
-        return re.sub(
-            r"[\s,./-]+",
-            "",
-            value
-        ).upper()
-    
-    
-    def get_country_code(patent_number):
-        """Extract the two-letter country code."""
-    
-        normalized = normalize_patent_number(
-            patent_number
-        )
-    
-        match = re.match(
-            r"^([A-Z]{2})",
-            normalized
-        )
-    
-        if match:
-            return match.group(1)
-    
-        return ""
-    
-    
-    def google_patents_url(patent_number):
-        """Create Google Patents URL."""
-    
-        patent = normalize_patent_number(
-            patent_number
-        )
-    
-        return (
-            f"https://patents.google.com/patent/"
-            f"{quote(patent, safe='')}/en"
-        )
-    
-    
-    def espacenet_url(patent_number):
-        """Create New Espacenet search URL."""
-    
-        patent = normalize_patent_number(
-            patent_number
-        )
-    
-        query = quote(
-            f"pn={patent}",
-            safe=""
-        )
-    
-        return (
-            f"https://worldwide.espacenet.com/patent/search"
-            f"?q={query}"
-        )
-    
-    
-    def get_orbit_hyperlink(cell):
-        """
-        Extract the actual hyperlink target from an Excel cell.
-    
-        The visible text is ignored.
-        """
-    
-        if cell.hyperlink is None:
-            return ""
-    
-        target = cell.hyperlink.target
-    
-        if target:
-            return target
-    
-        return ""
-    
-    
-    def create_target_url(
-        patent_number,
-        mode,
-        orbit_link
-    ):
-        """
-        Determine the destination URL.
-        """
-    
-        patent = normalize_patent_number(
-            patent_number
-        )
-    
-        country = get_country_code(
-            patent
-        )
-    
-    
-        
-    # --------------------------------------------------------
-    # GOOGLE PATENTS
-    # --------------------------------------------------------
-
-    if mode == "Google Patents":
-
-        return (
-            google_patents_url(patent),
-            "Google Patents"
-        )
-
-
-    # --------------------------------------------------------
-    # NEW ESPACENET
-    # --------------------------------------------------------
-
-    if mode == "New Espacenet":
-
-        return (
-            espacenet_url(patent),
-            "New Espacenet"
-        )
-
-
-    # --------------------------------------------------------
-    # DYNAMIC
-    # --------------------------------------------------------
-
-    if mode == "Dynamic":
-
-        if country == "US":
-
-            return (
-                google_patents_url(patent),
-                "Google Patents"
-            )
-
-
-        if country == "IN":
-
-            if orbit_link:
-
-                return (
-                    orbit_link,
-                    "Original Orbit Link"
-                )
-
-            return (
-                "",
-                "Missing Orbit Link"
-            )
-
-
-        return (
-            espacenet_url(patent),
-            "New Espacenet"
-        )
-
-
-    return (
-        "",
-        "No Link"
-    )
-
-
-def process_workbook(
-    uploaded_file,
-    patent_column,
-    orbit_column,
-    mode
-):
-    """
-    Process uploaded workbook.
-    """
-
-    uploaded_file.seek(0)
-
-    workbook = load_workbook(
-        uploaded_file,
-        keep_links=True
-    )
-
-    worksheet = workbook.active
-
-
-    # --------------------------------------------------------
-    # Find headers
-    # --------------------------------------------------------
-
-    headers = {}
-
-    for col in range(
-        1,
-        worksheet.max_column + 1
-    ):
-
-        value = clean_value(
-            worksheet.cell(
-                1,
-                col
-            ).value
-        )
-
-        if value:
-
-            headers[value] = col
-
-
-    patent_col_index = headers[
-        patent_column
-    ]
-
-    orbit_col_index = headers[
-        orbit_column
-    ]
-
-
-    # --------------------------------------------------------
-    # Statistics
-    # --------------------------------------------------------
-
-    total_rows = 0
-    linked_rows = 0
-    skipped_rows = 0
-
-    google_count = 0
-    espacenet_count = 0
-    orbit_count = 0
-    missing_orbit_count = 0
-
-
-    # --------------------------------------------------------
-    # Process rows
-    # --------------------------------------------------------
-
-    for row in range(
-        2,
-        worksheet.max_row + 1
-    ):
-
-        patent_cell = worksheet.cell(
-            row,
-            patent_col_index
-        )
-
-        orbit_cell = worksheet.cell(
-            row,
-            orbit_col_index
-        )
-
-        patent_number = clean_value(
-            patent_cell.value
-        )
-
-
-        if not patent_number:
-            continue
-
-
-        total_rows += 1
-
-
-        orbit_link = get_orbit_hyperlink(
-            orbit_cell
-        )
-
-
-        target_url, destination = create_target_url(
-            patent_number,
-            mode,
-            orbit_link
-        )
-
-
-        if not target_url:
-
-            skipped_rows += 1
-
-            if destination == "Missing Orbit Link":
-
-                missing_orbit_count += 1
-
-            continue
-
-
-        # ----------------------------------------------------
-        # Remove existing hyperlink
-        # ----------------------------------------------------
-
-        patent_cell.hyperlink = None
-
-
-        # ----------------------------------------------------
-        # Add new hyperlink
-        # ----------------------------------------------------
-
-        patent_cell.hyperlink = target_url
-
-        patent_cell.value = patent_number
-
-        patent_cell.style = "Hyperlink"
-
-
-        linked_rows += 1
-
-
-        # ----------------------------------------------------
-        # Statistics
-        # ----------------------------------------------------
-
-        if destination == "Google Patents":
-
-            google_count += 1
-
-        elif destination == "New Espacenet":
-
-            espacenet_count += 1
-
-        elif destination == "Original Orbit Link":
-
-            orbit_count += 1
-
-
-    # --------------------------------------------------------
-    # Excel usability
-    # --------------------------------------------------------
-
-    worksheet.freeze_panes = "A2"
-
-    if worksheet.max_row >= 1:
-
-        worksheet.auto_filter.ref = (
-            worksheet.dimensions
-        )
-
-
-    # --------------------------------------------------------
-    # Save
-    # --------------------------------------------------------
-
-    output = BytesIO()
-
-    workbook.save(output)
-
-    output.seek(0)
-
-
-    statistics = {
-        "total_rows": total_rows,
-        "linked_rows": linked_rows,
-        "skipped_rows": skipped_rows,
-        "google_count": google_count,
-        "espacenet_count": espacenet_count,
-        "orbit_count": orbit_count,
-        "missing_orbit_count": missing_orbit_count,
-    }
-
-
-    return output, statistics
