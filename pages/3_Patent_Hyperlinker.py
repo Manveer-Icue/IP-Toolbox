@@ -716,7 +716,8 @@ div[data-testid="stButton"] button[kind="primary"] {
 }
 
 div[data-testid="stButton"] button[kind="primary"] p,
-div[data-testid="stButton"] button[kind="primary"] span {
+div[data-testid="stButton"] button[kind="primary"] span,
+div[data-testid="stButton"] button[kind="primary"] div {
     color: #FFFFFF !important;
 }
 
@@ -764,7 +765,8 @@ div[data-testid="stDownloadButton"] button {
 }
 
 div[data-testid="stDownloadButton"] button p,
-div[data-testid="stDownloadButton"] button span {
+div[data-testid="stDownloadButton"] button span,
+div[data-testid="stDownloadButton"] button div {
     color: #FFFFFF !important;
 }
 
