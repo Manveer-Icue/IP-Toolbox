@@ -55,10 +55,6 @@ st.markdown(
     padding-bottom: 3.5rem;
 }
 
-* {
-    font-family: 'Inter', sans-serif;
-}
-
 
 /* ============================================================
    HEADER
@@ -70,6 +66,7 @@ st.markdown(
     color: #EE3C18;
     letter-spacing: -0.04em;
     line-height: 1.15;
+    margin-top: 0;
     margin-bottom: 0.35rem;
 }
 
@@ -84,6 +81,16 @@ st.markdown(
     color: var(--text-color);
     opacity: 0.70;
     line-height: 1.65;
+}
+
+
+/* ============================================================
+   BACK BUTTON
+   ============================================================ */
+
+.back-button-area {
+    min-height: 48px;
+    margin-bottom: 0.8rem;
 }
 
 
@@ -105,7 +112,7 @@ st.markdown(
 .processing-heading {
     font-weight: 600;
     color: var(--text-color);
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.45rem;
 }
 
 .processing-list {
@@ -122,7 +129,7 @@ st.markdown(
 .input-format-heading {
     font-weight: 600;
     color: var(--text-color);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
 }
 
 .input-format-note {
@@ -130,16 +137,17 @@ st.markdown(
     color: var(--text-color);
     opacity: 0.65;
     line-height: 1.55;
-    margin-top: 0.5rem;
+    margin-top: 0.75rem;
 }
 
 
 /* ============================================================
-   TABLE
+   INPUT TABLE
    ============================================================ */
 
-[data-testid="stTable"] {
-    border-radius: 7px;
+.input-table-wrapper {
+    border: 1px solid rgba(128,128,128,0.22);
+    border-radius: 9px;
     overflow: hidden;
 }
 
@@ -248,6 +256,11 @@ hr {
         font-size: 2.1rem;
     }
 
+    .back-button-area {
+        min-height: 48px;
+        margin-bottom: 0.8rem;
+    }
+
 }
 
 </style>
@@ -267,8 +280,18 @@ require_password()
 # BACK TO HOME
 # ============================================================
 
+st.markdown(
+    '<div class="back-button-area">',
+    unsafe_allow_html=True
+)
+
 if st.button("← Back to Home"):
     st.switch_page("Home.py")
+
+st.markdown(
+    '</div>',
+    unsafe_allow_html=True
+)
 
 
 # ============================================================
@@ -350,7 +373,71 @@ with st.container(border=True):
         }
     )
 
-    st.table(input_example)
+
+    # --------------------------------------------------------
+    # Styled example table
+    # --------------------------------------------------------
+
+    styled_table = (
+        input_example.style
+        .set_table_styles(
+            [
+                {
+                    "selector": "table",
+                    "props": [
+                        ("width", "100%"),
+                        ("border-collapse", "separate"),
+                        ("border-spacing", "0"),
+                        ("border", "1px solid #D9DEE5"),
+                        ("border-radius", "8px"),
+                        ("overflow", "hidden"),
+                        ("font-size", "0.84rem")
+                    ]
+                },
+                {
+                    "selector": "thead th",
+                    "props": [
+                        ("background-color", "#F3F5F7"),
+                        ("color", "#263238"),
+                        ("font-weight", "600"),
+                        ("text-align", "left"),
+                        ("padding", "10px 12px"),
+                        ("border-bottom", "1px solid #D9DEE5")
+                    ]
+                },
+                {
+                    "selector": "tbody td",
+                    "props": [
+                        ("padding", "10px 12px"),
+                        ("color", "#4F5B66"),
+                        ("border-bottom", "1px solid #E6E9ED")
+                    ]
+                },
+                {
+                    "selector": "tbody tr:nth-child(even) td",
+                    "props": [
+                        ("background-color", "#FAFBFC")
+                    ]
+                },
+                {
+                    "selector": "tbody tr:nth-child(odd) td",
+                    "props": [
+                        ("background-color", "#FFFFFF")
+                    ]
+                },
+                {
+                    "selector": "tbody tr:last-child td",
+                    "props": [
+                        ("border-bottom", "none")
+                    ]
+                }
+            ]
+        )
+        .hide(axis="index")
+    )
+
+    st.table(styled_table)
+
 
     st.markdown(
         """
@@ -362,6 +449,393 @@ with st.container(border=True):
         """,
         unsafe_allow_html=True
     )
+
+
+# ============================================================
+# FILE UPLOAD
+# ============================================================
+
+st.markdown(
+    "### Upload Excel File"
+)
+
+uploaded_file = st.file_uploader(
+    "Upload your Excel workbook",
+    type=["xlsx"],
+    label_visibility="collapsed",
+    help=(
+        "Upload an Excel workbook containing "
+        "PUBLICATION NUMBER and ORBIT LINK columns."
+    )
+)
+
+
+# ============================================================
+# INPUT OPTIONS
+# ============================================================
+
+if uploaded_file is not None:
+
+    try:
+
+        preview_bytes = uploaded_file.getvalue()
+
+        preview_workbook = load_workbook(
+            BytesIO(preview_bytes),
+            read_only=False,
+            keep_links=True
+        )
+
+        preview_sheet = preview_workbook.active
+
+        available_columns = []
+
+        for col in range(
+            1,
+            preview_sheet.max_column + 1
+        ):
+
+            value = clean_value(
+                preview_sheet.cell(
+                    1,
+                    col
+                ).value
+            )
+
+            if value:
+                available_columns.append(value)
+
+        preview_workbook.close()
+
+
+        if not available_columns:
+
+            st.error(
+                "No column headers were found in Row 1."
+            )
+
+            st.stop()
+
+
+        # ====================================================
+        # COLUMN SELECTION
+        # ====================================================
+
+        st.markdown(
+            "### Column Selection"
+        )
+
+        col1, col2 = st.columns(2)
+
+
+        with col1:
+
+            default_patent_index = 0
+
+            for idx, name in enumerate(
+                available_columns
+            ):
+
+                if normalize_patent_number(
+                    name
+                ) in [
+                    "PUBLICATIONNUMBER",
+                    "PATENTNUMBER",
+                    "PUBLICATIONNO",
+                    "PATENTNO"
+                ]:
+
+                    default_patent_index = idx
+                    break
+
+
+            patent_column = st.selectbox(
+                "Publication Number Column",
+                available_columns,
+                index=default_patent_index
+            )
+
+
+        with col2:
+
+            default_orbit_index = 0
+
+            for idx, name in enumerate(
+                available_columns
+            ):
+
+                normalized_name = (
+                    normalize_patent_number(
+                        name
+                    )
+                )
+
+                if normalized_name in [
+                    "ORBITLINK",
+                    "DOCUMENTLINK",
+                    "ORBIT"
+                ]:
+
+                    default_orbit_index = idx
+                    break
+
+
+            orbit_column = st.selectbox(
+                "Orbit Link Column",
+                available_columns,
+                index=default_orbit_index
+            )
+
+
+        # ====================================================
+        # LINKING MODE
+        # ====================================================
+
+        st.markdown(
+            "### Linking Mode"
+        )
+
+        mode = st.selectbox(
+            "Select hyperlinking mode",
+            [
+                "Dynamic",
+                "Google Patents",
+                "New Espacenet"
+            ],
+            index=0
+        )
+
+
+        if mode == "Dynamic":
+
+            st.info(
+                "Dynamic mode: US → Google Patents | "
+                "IN → Original Orbit Link | "
+                "All other patents → New Espacenet"
+            )
+
+
+        elif mode == "Google Patents":
+
+            st.info(
+                "All publication numbers will be linked "
+                "to Google Patents."
+            )
+
+
+        else:
+
+            st.info(
+                "All publication numbers will be linked "
+                "to New Espacenet."
+            )
+
+
+    except Exception as e:
+
+        st.error(
+            f"Unable to read the uploaded Excel file: {e}"
+        )
+
+        st.stop()
+
+
+# ============================================================
+# RUN BUTTON
+# ============================================================
+
+run_button = st.button(
+    "CREATE PATENT HYPERLINKS",
+    type="primary",
+    use_container_width=True
+)
+
+
+# ============================================================
+# RUN
+# ============================================================
+
+if run_button:
+
+    if uploaded_file is None:
+
+        st.error(
+            "Please upload an Excel workbook first."
+        )
+
+        st.stop()
+
+
+    try:
+
+        with st.spinner(
+            "Creating patent hyperlinks..."
+        ):
+
+            output_file, stats = process_workbook(
+                uploaded_file,
+                patent_column,
+                orbit_column,
+                mode
+            )
+
+
+        st.success(
+            f"Completed. "
+            f"{stats['linked_rows']:,} patent numbers "
+            f"were hyperlinked."
+        )
+
+
+        # ====================================================
+        # PROCESSING SUMMARY
+        # ====================================================
+
+        st.markdown(
+            "### Processing Summary"
+        )
+
+        st1, st2, st3, st4 = st.columns(4)
+
+
+        with st1:
+
+            st.markdown(
+                f'<div class="summary-number">'
+                f'{stats["total_rows"]:,}'
+                f'</div>',
+                unsafe_allow_html=True
+            )
+
+            st.markdown(
+                '<div class="summary-label">'
+                'Patent rows'
+                '</div>',
+                unsafe_allow_html=True
+            )
+
+
+        with st2:
+
+            st.markdown(
+                f'<div class="summary-number">'
+                f'{stats["google_count"]:,}'
+                f'</div>',
+                unsafe_allow_html=True
+            )
+
+            st.markdown(
+                '<div class="summary-label">'
+                'Google Patents'
+                '</div>',
+                unsafe_allow_html=True
+            )
+
+
+        with st3:
+
+            st.markdown(
+                f'<div class="summary-number">'
+                f'{stats["espacenet_count"]:,}'
+                f'</div>',
+                unsafe_allow_html=True
+            )
+
+            st.markdown(
+                '<div class="summary-label">'
+                'New Espacenet'
+                '</div>',
+                unsafe_allow_html=True
+            )
+
+
+        with st4:
+
+            st.markdown(
+                f'<div class="summary-number">'
+                f'{stats["orbit_count"]:,}'
+                f'</div>',
+                unsafe_allow_html=True
+            )
+
+            st.markdown(
+                '<div class="summary-label">'
+                'Original Orbit Links'
+                '</div>',
+                unsafe_allow_html=True
+            )
+
+
+        # ====================================================
+        # WARNINGS
+        # ====================================================
+
+        if stats["missing_orbit_count"] > 0:
+
+            st.warning(
+                f'{stats["missing_orbit_count"]:,} Indian patent(s) '
+                f'could not be hyperlinked because the ORBIT LINK '
+                f'cell did not contain an actual hyperlink.'
+            )
+
+
+        if stats["skipped_rows"] > 0:
+
+            st.warning(
+                f'{stats["skipped_rows"]:,} row(s) were skipped.'
+            )
+
+
+        # ====================================================
+        # DOWNLOAD
+        # ====================================================
+
+        st.markdown("---")
+
+        st.markdown(
+            "### Download Result"
+        )
+
+
+        original_name = uploaded_file.name
+
+
+        if original_name.lower().endswith(".xlsx"):
+
+            download_name = (
+                original_name[:-5]
+                + "_HYPERLINKED.xlsx"
+            )
+
+        else:
+
+            download_name = (
+                original_name
+                + "_HYPERLINKED.xlsx"
+            )
+
+
+        st.download_button(
+            label="DOWNLOAD HYPERLINKED EXCEL",
+            data=output_file,
+            file_name=download_name,
+            mime=(
+                "application/vnd.openxmlformats-officedocument."
+                "spreadsheetml.sheet"
+            ),
+            type="primary",
+            use_container_width=True
+        )
+
+
+    except Exception as e:
+
+        st.error(
+            f"An error occurred while processing "
+            f"the workbook: {e}"
+        )
+
+        st.exception(e)
 
 
 # ============================================================
@@ -741,404 +1215,3 @@ def process_workbook(
 
 
     return output, statistics
-
-
-# ============================================================
-# FILE UPLOAD
-# ============================================================
-
-st.markdown(
-    "### Upload Excel File"
-)
-
-uploaded_file = st.file_uploader(
-    "Upload your Excel workbook",
-    type=["xlsx"],
-    label_visibility="collapsed",
-    help=(
-        "Upload an Excel workbook containing "
-        "PUBLICATION NUMBER and ORBIT LINK columns."
-    )
-)
-
-
-# ============================================================
-# INPUT OPTIONS
-# ============================================================
-
-if uploaded_file is not None:
-
-    try:
-
-        preview_bytes = uploaded_file.getvalue()
-
-        preview_workbook = load_workbook(
-            BytesIO(preview_bytes),
-            read_only=False,
-            keep_links=True
-        )
-
-        preview_sheet = (
-            preview_workbook.active
-        )
-
-        available_columns = []
-
-
-        for col in range(
-            1,
-            preview_sheet.max_column + 1
-        ):
-
-            value = clean_value(
-                preview_sheet.cell(
-                    1,
-                    col
-                ).value
-            )
-
-            if value:
-
-                available_columns.append(
-                    value
-                )
-
-
-        preview_workbook.close()
-
-
-        if not available_columns:
-
-            st.error(
-                "No column headers were found in Row 1."
-            )
-
-            st.stop()
-
-
-        # ----------------------------------------------------
-        # COLUMN SELECTION
-        # ----------------------------------------------------
-
-        st.markdown(
-            "### Column Selection"
-        )
-
-        col1, col2 = st.columns(2)
-
-
-        with col1:
-
-            default_patent_index = 0
-
-
-            for idx, name in enumerate(
-                available_columns
-            ):
-
-                if normalize_patent_number(
-                    name
-                ) in [
-                    "PUBLICATIONNUMBER",
-                    "PATENTNUMBER",
-                    "PUBLICATIONNO",
-                    "PATENTNO"
-                ]:
-
-                    default_patent_index = idx
-
-                    break
-
-
-            patent_column = st.selectbox(
-                "Publication Number Column",
-                available_columns,
-                index=default_patent_index
-            )
-
-
-        with col2:
-
-            default_orbit_index = 0
-
-
-            for idx, name in enumerate(
-                available_columns
-            ):
-
-                normalized_name = (
-                    normalize_patent_number(
-                        name
-                    )
-                )
-
-
-                if normalized_name in [
-                    "ORBITLINK",
-                    "DOCUMENTLINK",
-                    "ORBIT"
-                ]:
-
-                    default_orbit_index = idx
-
-                    break
-
-
-            orbit_column = st.selectbox(
-                "Orbit Link Column",
-                available_columns,
-                index=default_orbit_index
-            )
-
-
-        # ----------------------------------------------------
-        # LINKING MODE
-        # ----------------------------------------------------
-
-        st.markdown(
-            "### Linking Mode"
-        )
-
-
-        mode = st.selectbox(
-            "Select hyperlinking mode",
-            [
-                "Dynamic",
-                "Google Patents",
-                "New Espacenet"
-            ],
-            index=0
-        )
-
-
-        if mode == "Dynamic":
-
-            st.info(
-                "Dynamic mode: US → Google Patents | "
-                "IN → Original Orbit Link | "
-                "All other patents → New Espacenet"
-            )
-
-
-        elif mode == "Google Patents":
-
-            st.info(
-                "All publication numbers will be linked "
-                "to Google Patents."
-            )
-
-
-        else:
-
-            st.info(
-                "All publication numbers will be linked "
-                "to New Espacenet."
-            )
-
-
-    except Exception as e:
-
-        st.error(
-            f"Unable to read the uploaded Excel file: {e}"
-        )
-
-        st.stop()
-
-
-# ============================================================
-# RUN BUTTON
-# ============================================================
-
-run_button = st.button(
-    "CREATE PATENT HYPERLINKS",
-    type="primary",
-    use_container_width=True
-)
-
-
-# ============================================================
-# RUN
-# ============================================================
-
-if run_button:
-
-    if uploaded_file is None:
-
-        st.error(
-            "Please upload an Excel workbook first."
-        )
-
-        st.stop()
-
-
-    try:
-
-        with st.spinner(
-            "Creating patent hyperlinks..."
-        ):
-
-            output_file, stats = process_workbook(
-                uploaded_file,
-                patent_column,
-                orbit_column,
-                mode
-            )
-
-
-        st.success(
-            f"Completed. "
-            f"{stats['linked_rows']:,} patent numbers "
-            f"were hyperlinked."
-        )
-
-
-        # ----------------------------------------------------
-        # SUMMARY
-        # ----------------------------------------------------
-
-        st.markdown(
-            "### Processing Summary"
-        )
-
-
-        st1, st2, st3, st4 = st.columns(4)
-
-
-        with st1:
-
-            st.markdown(
-                f'<div class="summary-number">'
-                f'{stats["total_rows"]:,}'
-                f'</div>',
-                unsafe_allow_html=True
-            )
-
-            st.markdown(
-                '<div class="summary-label">'
-                'Patent rows'
-                '</div>',
-                unsafe_allow_html=True
-            )
-
-
-        with st2:
-
-            st.markdown(
-                f'<div class="summary-number">'
-                f'{stats["google_count"]:,}'
-                f'</div>',
-                unsafe_allow_html=True
-            )
-
-            st.markdown(
-                '<div class="summary-label">'
-                'Google Patents'
-                '</div>',
-                unsafe_allow_html=True
-            )
-
-
-        with st3:
-
-            st.markdown(
-                f'<div class="summary-number">'
-                f'{stats["espacenet_count"]:,}'
-                f'</div>',
-                unsafe_allow_html=True
-            )
-
-            st.markdown(
-                '<div class="summary-label">'
-                'New Espacenet'
-                '</div>',
-                unsafe_allow_html=True
-            )
-
-
-        with st4:
-
-            st.markdown(
-                f'<div class="summary-number">'
-                f'{stats["orbit_count"]:,}'
-                f'</div>',
-                unsafe_allow_html=True
-            )
-
-            st.markdown(
-                '<div class="summary-label">'
-                'Original Orbit Links'
-                '</div>',
-                unsafe_allow_html=True
-            )
-
-
-        # ----------------------------------------------------
-        # MISSING ORBIT WARNING
-        # ----------------------------------------------------
-
-        if stats["missing_orbit_count"] > 0:
-
-            st.warning(
-                f'{stats["missing_orbit_count"]:,} Indian patent(s) '
-                f'could not be hyperlinked because the ORBIT LINK '
-                f'cell did not contain an actual hyperlink.'
-            )
-
-
-        if stats["skipped_rows"] > 0:
-
-            st.warning(
-                f'{stats["skipped_rows"]:,} row(s) were skipped.'
-            )
-
-
-        # ----------------------------------------------------
-        # DOWNLOAD
-        # ----------------------------------------------------
-
-        st.markdown("---")
-
-        st.markdown(
-            "### Download Result"
-        )
-
-
-        original_name = uploaded_file.name
-
-
-        if original_name.lower().endswith(".xlsx"):
-
-            download_name = (
-                original_name[:-5]
-                + "_HYPERLINKED.xlsx"
-            )
-
-        else:
-
-            download_name = (
-                original_name
-                + "_HYPERLINKED.xlsx"
-            )
-
-
-        st.download_button(
-            label="DOWNLOAD HYPERLINKED EXCEL",
-            data=output_file,
-            file_name=download_name,
-            mime=(
-                "application/vnd.openxmlformats-officedocument."
-                "spreadsheetml.sheet"
-            ),
-            type="primary",
-            use_container_width=True
-        )
-
-
-    except Exception as e:
-
-        st.error(
-            f"An error occurred while processing "
-            f"the workbook: {e}"
-        )
-
-        st.exception(e)
