@@ -35,8 +35,8 @@ st.markdown(
 }
 
 .stApp {
-    background-color: var(--background-color);
-    color: var(--text-color);
+    background-color: #F7F7F5;
+    color: #34383C;
 }
 
 .block-container {
@@ -66,13 +66,12 @@ st.markdown(
 .sub-title {
     font-size: 1.08rem;
     font-weight: 500;
-    color: var(--text-color);
+    color: #34383C;
     margin-bottom: 1.05rem;
 }
 
-.block-container p {
-    color: var(--text-color);
-    opacity: 0.70;
+.block-container > div[data-testid="stVerticalBlock"] p {
+    color: #73777B;
     line-height: 1.65;
 }
 
@@ -81,27 +80,25 @@ st.markdown(
    PROCESSING INFORMATION
    ============================================================ */
 
-.processing-box {
-    margin-top: 1.25rem;
-    margin-bottom: 2.2rem;
-    padding: 1.15rem 1.5rem;
-    background-color: var(--secondary-background-color);
-    border: 1px solid rgba(128,128,128,0.20);
+.block-container .stMarkdown ul {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E5E2;
     border-radius: 10px;
+    padding: 1rem 1.3rem 1rem 2.35rem;
+    margin-top: 0.65rem;
+    margin-bottom: 1.8rem;
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.025);
 }
 
-.processing-title {
-    font-weight: 600;
-    color: var(--text-color);
-    margin-bottom: 0.65rem;
+.block-container .stMarkdown li {
+    color: #656A6F;
+    font-size: 0.86rem;
+    line-height: 1.6;
+    margin-bottom: 0.15rem;
 }
 
-.processing-list {
-    margin: 0;
-    padding-left: 1.35rem;
-    color: var(--text-color);
-    opacity: 0.70;
-    line-height: 1.65;
+.block-container .stMarkdown li::marker {
+    color: #EE3C18;
 }
 
 
@@ -113,15 +110,22 @@ div[data-testid="stButton"] button {
     border-radius: 7px;
     font-size: 0.82rem;
     font-weight: 500;
-    border: 1px solid rgba(128,128,128,0.25);
-    background-color: var(--secondary-background-color);
-    color: var(--text-color);
+    border: 1px solid #E1E1DE;
+    background-color: #FFFFFF;
+    color: #4D5155;
     min-height: 36px;
+    transition: all 0.15s ease;
 }
 
 div[data-testid="stButton"] button:hover {
     border-color: #EE3C18;
     color: #EE3C18;
+    background-color: #FFF8F6;
+}
+
+div[data-testid="stButton"] button:focus {
+    box-shadow: 0 0 0 3px rgba(238,60,24,0.12);
+    outline: none;
 }
 
 
@@ -132,7 +136,12 @@ div[data-testid="stButton"] button:hover {
 div[data-testid="stButton"] button[kind="primary"] {
     background-color: #EE3C18 !important;
     border: 1px solid #EE3C18 !important;
+    color: #FFFFFF !important;
+    border-radius: 8px;
+    font-size: 0.86rem;
+    font-weight: 600;
     min-height: 42px;
+    letter-spacing: 0.01em;
     opacity: 1 !important;
 }
 
@@ -152,16 +161,32 @@ div[data-testid="stButton"] button[kind="primary"] div {
     font-weight: 700 !important;
 }
 
+div[data-testid="stButton"] button[kind="primary"]:hover {
+    background-color: #D93414 !important;
+    border-color: #D93414 !important;
+    color: #FFFFFF !important;
+}
+
 
 /* ============================================================
    FILE UPLOADER
    ============================================================ */
 
 [data-testid="stFileUploader"] {
-    background-color: var(--secondary-background-color);
-    border: 1px dashed rgba(128,128,128,0.30);
+    background-color: #FFFFFF;
+    border: 1px dashed #D8D8D4;
     border-radius: 10px;
     padding: 0.8rem 1rem;
+    box-shadow: 0 2px 7px rgba(0,0,0,0.025);
+}
+
+[data-testid="stFileUploader"]:hover {
+    border-color: #EE3C18;
+}
+
+[data-testid="stFileUploaderDropzone"] {
+    background-color: #FAFAF9;
+    border: none;
 }
 
 
@@ -174,6 +199,7 @@ div[data-testid="stDownloadButton"] button {
     border: 1px solid #EE3C18 !important;
     color: #FFFFFF !important;
     border-radius: 8px;
+    font-size: 0.84rem;
     font-weight: 600 !important;
     min-height: 42px;
     opacity: 1 !important;
@@ -195,13 +221,70 @@ div[data-testid="stDownloadButton"] button div {
     font-weight: 700 !important;
 }
 
+div[data-testid="stDownloadButton"] button:hover {
+    background-color: #D93414 !important;
+    border-color: #D93414 !important;
+}
+
+
+/* ============================================================
+   METRICS
+   ============================================================ */
+
+div[data-testid="stMetric"] {
+    background: #FFFFFF;
+    border: 1px solid #E5E5E2;
+    border-radius: 9px;
+    padding: 0.9rem 1rem;
+    min-height: 88px;
+    box-shadow: 0 2px 7px rgba(0,0,0,0.025);
+}
+
+div[data-testid="stMetricLabel"] {
+    color: #85898D !important;
+    font-size: 0.72rem !important;
+    font-weight: 500 !important;
+}
+
+div[data-testid="stMetricValue"] {
+    color: #2D3033 !important;
+    font-size: 1.35rem !important;
+    font-weight: 600 !important;
+}
+
+
+/* ============================================================
+   ALERTS
+   ============================================================ */
+
+div[data-testid="stAlert"] {
+    border-radius: 8px;
+    font-size: 0.84rem;
+    border-width: 1px;
+}
+
+div[data-testid="stAlert"] p {
+    line-height: 1.55;
+}
+
+
+/* ============================================================
+   SPINNER
+   ============================================================ */
+
+[data-testid="stSpinner"] {
+    color: #EE3C18;
+}
+
 
 /* ============================================================
    DIVIDERS
    ============================================================ */
 
-hr {
-    border-top: 1px solid rgba(128,128,128,0.22);
+.block-container hr {
+    border: none;
+    border-top: 1px solid #E2E2DF;
+    margin: 1.8rem 0;
 }
 
 
@@ -264,27 +347,18 @@ st.write(
 
 st.markdown(
     """
-<div class="processing-box">
+**Processing includes:**
 
-<div class="processing-title">
-Processing includes:
-</div>
-
-<ul class="processing-list">
-<li>Select the categorization column from the Excel headers</li>
-<li>Identify single or multiple categories assigned to each patent</li>
-<li>Use existing category columns when already present</li>
-<li>Create new category columns when categories are not already added</li>
-<li>Mark applicable patents with <strong>Y</strong></li>
-<li>Case-insensitive and whitespace-insensitive category matching</li>
-<li>Leave blank categorization cells unchanged</li>
-<li>Preserve all existing Excel data and columns</li>
-<li>Export the processed workbook as a new Excel file</li>
-</ul>
-
-</div>
-""",
-    unsafe_allow_html=True
+- Select the categorization column from the Excel headers
+- Identify single or multiple categories assigned to each patent
+- Use existing category columns when already present
+- Create new category columns when categories are not already added
+- Mark applicable patents with **Y**
+- Case-insensitive and whitespace-insensitive category matching
+- Leave blank categorization cells unchanged
+- Preserve all existing Excel data and columns
+- Export the processed workbook as a new Excel file
+"""
 )
 
 
