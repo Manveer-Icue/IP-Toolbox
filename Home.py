@@ -91,59 +91,11 @@ st.markdown(
 
 
 /* ============================================================
-   AVAILABLE TOOLS - HORIZONTAL SCROLL
+   TOOL ROW
    ============================================================ */
 
 [data-testid="stHorizontalBlock"] {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-
-    gap: 1.5rem !important;
-
-    padding-bottom: 0.8rem;
-
     width: 100% !important;
-    max-width: 100% !important;
-
-    scrollbar-width: thin;
-}
-
-[data-testid="stHorizontalBlock"]::-webkit-scrollbar {
-    height: 7px;
-}
-
-[data-testid="stHorizontalBlock"]::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-[data-testid="stHorizontalBlock"]::-webkit-scrollbar-thumb {
-    background: #D2D2CF;
-    border-radius: 10px;
-}
-
-[data-testid="stHorizontalBlock"]::-webkit-scrollbar-thumb:hover {
-    background: #B9B9B5;
-}
-
-
-/* ============================================================
-   FIXED TOOL COLUMN WIDTH
-   ============================================================ */
-
-[data-testid="stHorizontalBlock"] > [data-testid="column"] {
-    flex: 0 0 260px !important;
-    flex-basis: 260px !important;
-
-    width: 260px !important;
-    min-width: 260px !important;
-    max-width: 260px !important;
-
-    flex-shrink: 0 !important;
-
-    overflow: visible !important;
 }
 
 
@@ -152,13 +104,9 @@ st.markdown(
    ============================================================ */
 
 .tool-wrapper {
-    width: 260px;
-    min-width: 260px;
-
+    width: 100%;
     display: flex;
     flex-direction: column;
-
-    overflow: visible;
 }
 
 
@@ -167,10 +115,7 @@ st.markdown(
    ============================================================ */
 
 .tool-card {
-    width: 260px;
-    min-width: 260px;
-    max-width: 260px;
-
+    width: 100%;
     height: 390px;
     min-height: 390px;
     max-height: 390px;
@@ -248,6 +193,8 @@ st.markdown(
     font-weight: 600;
     line-height: 1.2;
     letter-spacing: -0.015em;
+
+    overflow: hidden;
 }
 
 .tool-name-box-disabled {
@@ -289,6 +236,8 @@ st.markdown(
 
     letter-spacing: 0.04em;
     text-transform: uppercase;
+
+    white-space: nowrap;
 }
 
 .status-pending {
@@ -308,11 +257,15 @@ st.markdown(
 
     letter-spacing: 0.04em;
     text-transform: uppercase;
+
+    white-space: nowrap;
 }
 
 .status-dot-live {
     width: 5px;
     height: 5px;
+
+    flex-shrink: 0;
 
     border-radius: 50%;
 
@@ -322,6 +275,8 @@ st.markdown(
 .status-dot-pending {
     width: 5px;
     height: 5px;
+
+    flex-shrink: 0;
 
     border-radius: 50%;
 
@@ -361,20 +316,7 @@ st.markdown(
 
 
 /* ============================================================
-   BUTTON AREA
-   ============================================================ */
-
-.tool-button-area {
-    height: 42px;
-    min-height: 42px;
-
-    display: flex;
-    align-items: flex-end;
-}
-
-
-/* ============================================================
-   STREAMLIT BUTTON
+   BUTTON
    ============================================================ */
 
 div[data-testid="stButton"] {
@@ -443,33 +385,7 @@ div[data-testid="stButton"] button:focus {
         font-size: 2.1rem;
     }
 
-    [data-testid="stHorizontalBlock"] {
-        gap: 1.25rem !important;
-    }
-
-    [data-testid="stHorizontalBlock"] > [data-testid="column"] {
-        flex: 0 0 260px !important;
-        flex-basis: 260px !important;
-
-        width: 260px !important;
-        min-width: 260px !important;
-        max-width: 260px !important;
-
-        flex-shrink: 0 !important;
-
-        overflow: visible !important;
-    }
-
-    .tool-wrapper {
-        width: 260px;
-        min-width: 260px;
-    }
-
     .tool-card {
-        width: 260px;
-        min-width: 260px;
-        max-width: 260px;
-
         height: 390px;
         min-height: 390px;
         max-height: 390px;
@@ -507,7 +423,11 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-col1, col2, col3, col4, col5 = st.columns(5, gap="large")
+col1, col2, col3, col4, col5 = st.columns(
+    5,
+    gap="large",
+    wrap=False
+)
 
 
 # ============================================================
