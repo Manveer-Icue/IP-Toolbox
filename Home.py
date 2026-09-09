@@ -101,11 +101,36 @@ st.markdown(
 
 [data-testid="stHorizontalBlock"] {
     row-gap: 1.5rem !important;
+    align-items: stretch !important;
 }
 
 [data-testid="column"] {
     min-width: 260px !important;
     flex: 1 1 260px !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+[data-testid="column"] > div {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 !important;
+}
+
+[data-testid="column"] [data-testid="stVerticalBlock"] {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+[data-testid="column"] [data-testid="element-container"]:has(.tool-card) {
+    flex: 1 !important;
+    display: flex !important;
+}
+
+[data-testid="column"] [data-testid="stMarkdownContainer"]:has(.tool-card) {
+    flex: 1 !important;
+    display: flex !important;
 }
 
 
@@ -120,6 +145,7 @@ st.markdown(
 
 .tool-card {
     width: 100%;
+    height: 100%;
     min-height: 300px;
 
     box-sizing: border-box;
