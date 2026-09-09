@@ -1,11 +1,13 @@
 import streamlit as st
 from auth import require_password
 
+
 st.set_page_config(
     page_title="IP Toolbox",
     page_icon="📇",
     layout="wide"
 )
+
 
 # ============================================================
 # HIDE SIDEBAR
@@ -91,22 +93,24 @@ st.markdown(
 
 
 /* ============================================================
-   RESPONSIVE COLUMN BEHAVIOR
-   ------------------------------------------------------------
-   Each column gets a minimum width. When the viewport is too
-   narrow to fit them side by side, Streamlit (with wrap=True)
-   wraps them onto new rows automatically - so cards never
-   squeeze narrower than this, and never overflow the page.
+   TOOL ROW
    ============================================================ */
 
 [data-testid="stHorizontalBlock"] {
+    width: 100% !important;
     row-gap: 1.5rem !important;
     align-items: stretch !important;
 }
 
+
+/*
+   IMPORTANT:
+   Do not force a minimum pixel width on Streamlit columns.
+   Doing so causes the cards to overflow/overlap when the
+   browser width changes.
+*/
+
 [data-testid="column"] {
-    min-width: 260px !important;
-    flex: 1 1 260px !important;
     display: flex !important;
     flex-direction: column !important;
 }
@@ -123,30 +127,16 @@ st.markdown(
     flex-direction: column !important;
 }
 
-[data-testid="column"] [data-testid="element-container"]:has(.tool-card) {
-    flex: 1 !important;
-    display: flex !important;
-}
-
-[data-testid="column"] [data-testid="stMarkdownContainer"]:has(.tool-card) {
-    flex: 1 !important;
-    display: flex !important;
-}
-
 
 /* ============================================================
    TOOL CARD
-   ------------------------------------------------------------
-   No fixed height and no overflow:hidden - the card grows to
-   fit its content instead of clipping it. Cards in the same
-   row still line up evenly because Streamlit's row is a flex
-   container with stretch alignment by default.
    ============================================================ */
 
 .tool-card {
     width: 100%;
-    height: 100%;
-    min-height: 300px;
+    height: 360px;
+    min-height: 360px;
+    max-height: 360px;
 
     box-sizing: border-box;
 
@@ -186,16 +176,15 @@ st.markdown(
 
 /* ============================================================
    TOOL NAME
-   ------------------------------------------------------------
-   No fixed height - long two/three-line names simply take the
-   space they need instead of being clipped.
    ============================================================ */
 
 .tool-name-box {
     width: 100%;
+    min-height: 80px;
     box-sizing: border-box;
 
-    display: inline-block;
+    display: flex;
+    align-items: center;
 
     background-color: #FFF0EC;
     color: #EE3C18;
@@ -289,10 +278,6 @@ st.markdown(
 
 /* ============================================================
    DESCRIPTION
-   ------------------------------------------------------------
-   flex: 1 pushes the button (rendered after the card closes)
-   to align consistently near the bottom across a row, without
-   ever clipping the text itself.
    ============================================================ */
 
 .tool-desc {
@@ -300,6 +285,7 @@ st.markdown(
     line-height: 1.6;
     color: #74787D;
     flex: 1;
+    min-height: 0;
 }
 
 .tool-desc-pending {
@@ -307,6 +293,7 @@ st.markdown(
     line-height: 1.6;
     color: #96999D;
     flex: 1;
+    min-height: 0;
 }
 
 
@@ -332,7 +319,6 @@ div[data-testid="stButton"] button {
     padding: 0.42rem 0.85rem;
 
     min-height: 36px;
-    width: 100%;
 
     transition: all 0.15s ease;
 }
@@ -371,18 +357,27 @@ div[data-testid="stButton"] button:focus {
    ============================================================ */
 
 @media (max-width: 900px) {
+
     .block-container {
         padding-top: 2.5rem;
     }
+
     .toolbox-wordmark {
         font-size: 2.1rem;
     }
 }
 
 @media (max-width: 480px) {
+
     [data-testid="column"] {
         min-width: 100% !important;
         flex: 1 1 100% !important;
+    }
+
+    .tool-card {
+        height: auto;
+        min-height: 320px;
+        max-height: none;
     }
 }
 
@@ -416,6 +411,7 @@ st.markdown(
     '<div class="section-label">Available tools</div>',
     unsafe_allow_html=True
 )
+
 
 col1, col2, col3, col4, col5 = st.columns(
     5,
