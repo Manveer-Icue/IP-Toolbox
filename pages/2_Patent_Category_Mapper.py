@@ -124,17 +124,32 @@ div[data-testid="stButton"] button:hover {
     color: #EE3C18;
 }
 
+
+/* ------------------------------------------------------------
+   PRIMARY BUTTON
+   ------------------------------------------------------------ */
+
 div[data-testid="stButton"] button[kind="primary"] {
-    background-color: #EE3C18;
-    border: 1px solid #EE3C18;
-    color: #FFFFFF !important;
-    font-weight: 600;
+    background-color: #EE3C18 !important;
+    border: 1px solid #EE3C18 !important;
     min-height: 42px;
+    opacity: 1 !important;
+}
+
+div[data-testid="stButton"] button[kind="primary"] * {
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    opacity: 1 !important;
+    font-weight: 700 !important;
 }
 
 div[data-testid="stButton"] button[kind="primary"] p,
-div[data-testid="stButton"] button[kind="primary"] span {
+div[data-testid="stButton"] button[kind="primary"] span,
+div[data-testid="stButton"] button[kind="primary"] div {
     color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    opacity: 1 !important;
+    font-weight: 700 !important;
 }
 
 
@@ -155,17 +170,29 @@ div[data-testid="stButton"] button[kind="primary"] span {
    ============================================================ */
 
 div[data-testid="stDownloadButton"] button {
-    background-color: #EE3C18;
-    border: 1px solid #EE3C18;
+    background-color: #EE3C18 !important;
+    border: 1px solid #EE3C18 !important;
     color: #FFFFFF !important;
     border-radius: 8px;
-    font-weight: 600;
+    font-weight: 600 !important;
     min-height: 42px;
+    opacity: 1 !important;
+}
+
+div[data-testid="stDownloadButton"] button * {
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    opacity: 1 !important;
+    font-weight: 700 !important;
 }
 
 div[data-testid="stDownloadButton"] button p,
-div[data-testid="stDownloadButton"] button span {
+div[data-testid="stDownloadButton"] button span,
+div[data-testid="stDownloadButton"] button div {
     color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    opacity: 1 !important;
+    font-weight: 700 !important;
 }
 
 
