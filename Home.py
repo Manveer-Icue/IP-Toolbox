@@ -95,11 +95,13 @@ st.markdown(
    ============================================================ */
 
 [data-testid="stHorizontalBlock"] {
+    display: flex !important;
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
-    overflow-y: visible !important;
+    overflow-y: hidden !important;
     gap: 1.5rem !important;
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.8rem;
+    width: 100% !important;
     scrollbar-width: thin;
 }
 
@@ -127,7 +129,10 @@ st.markdown(
 
 [data-testid="stHorizontalBlock"] > [data-testid="column"] {
     flex: 0 0 260px !important;
+    width: 260px !important;
     min-width: 260px !important;
+    max-width: 260px !important;
+    flex-shrink: 0 !important;
 }
 
 
@@ -147,21 +152,25 @@ st.markdown(
    ============================================================ */
 
 .tool-card {
-    width: 100%;
+    width: 260px;
     height: 390px;
     min-height: 390px;
+    max-height: 390px;
+
     box-sizing: border-box;
 
     background-color: #FFFFFF;
     border: 1px solid #E3E3E0;
     border-radius: 12px;
 
-    padding: 1.5rem 1.5rem 1.35rem 1.5rem;
+    padding: 1.5rem;
 
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.035);
 
     display: flex;
     flex-direction: column;
+
+    overflow: hidden;
 
     transition:
         transform 0.18s ease,
@@ -193,8 +202,10 @@ st.markdown(
 .tool-name-area {
     height: 92px;
     min-height: 92px;
+
     display: flex;
     align-items: flex-start;
+
     flex-shrink: 0;
 }
 
@@ -310,8 +321,11 @@ st.markdown(
     color: #74787D;
 
     flex: 1;
+    min-height: 0;
 
     padding-top: 0.1rem;
+
+    overflow: hidden;
 }
 
 .tool-desc-pending {
@@ -320,8 +334,11 @@ st.markdown(
     color: #96999D;
 
     flex: 1;
+    min-height: 0;
 
     padding-top: 0.1rem;
+
+    overflow: hidden;
 }
 
 
@@ -414,13 +431,18 @@ div[data-testid="stButton"] button:focus {
     }
 
     [data-testid="stHorizontalBlock"] > [data-testid="column"] {
-        flex: 0 0 250px !important;
-        min-width: 250px !important;
+        flex: 0 0 260px !important;
+        width: 260px !important;
+        min-width: 260px !important;
+        max-width: 260px !important;
+        flex-shrink: 0 !important;
     }
 
     .tool-card {
+        width: 260px;
         height: 390px;
         min-height: 390px;
+        max-height: 390px;
     }
 }
 
