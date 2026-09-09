@@ -3,7 +3,7 @@ from openpyxl import load_workbook
 from io import BytesIO
 from urllib.parse import quote
 import re
-import textwrap
+import pandas as pd
 
 from auth import require_password
 
@@ -51,7 +51,7 @@ st.markdown(
 
 .block-container {
     max-width: 1180px;
-    padding-top: 4rem;
+    padding-top: 2.5rem;
     padding-bottom: 3.5rem;
 }
 
@@ -88,96 +88,59 @@ st.markdown(
 
 
 /* ============================================================
-   INFORMATION BOX
+   NATIVE STREAMLIT CONTAINERS
    ============================================================ */
 
-.processing-box {
-    margin-top: 1.25rem;
-    margin-bottom: 1.4rem;
-    padding: 1.15rem 1.5rem;
-    background-color: var(--secondary-background-color);
-    border: 1px solid rgba(128,128,128,0.20);
+[data-testid="stVerticalBlockBorderWrapper"] {
     border-radius: 10px;
-}
-
-.processing-title {
-    font-weight: 600;
-    color: var(--text-color);
-    margin-bottom: 0.75rem;
-}
-
-.processing-item {
-    color: var(--text-color);
-    opacity: 0.70;
-    line-height: 1.65;
-    margin-bottom: 0.35rem;
-    padding-left: 0.15rem;
-}
-
-.processing-item:last-child {
-    margin-bottom: 0;
+    border: 1px solid rgba(128,128,128,0.20);
+    background-color: var(--background-color);
 }
 
 
 /* ============================================================
-   INPUT FORMAT BOX
+   PROCESSING INFORMATION
    ============================================================ */
 
-.input-format-box {
-    margin-top: 0.9rem;
-    margin-bottom: 2.2rem;
-    padding: 1.15rem 1.5rem;
-    background-color: var(--secondary-background-color);
-    border: 1px solid rgba(128,128,128,0.20);
-    border-radius: 10px;
-}
-
-.input-format-title {
+.processing-heading {
     font-weight: 600;
     color: var(--text-color);
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.35rem;
+}
+
+.processing-list {
+    color: var(--text-color);
+    opacity: 0.70;
+    line-height: 1.65;
+}
+
+
+/* ============================================================
+   INPUT FORMAT
+   ============================================================ */
+
+.input-format-heading {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
 }
 
 .input-format-note {
     font-size: 0.82rem;
     color: var(--text-color);
     opacity: 0.65;
-    margin-top: 0.75rem;
     line-height: 1.55;
+    margin-top: 0.5rem;
 }
 
 
 /* ============================================================
-   INPUT TABLE
+   TABLE
    ============================================================ */
 
-.input-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.84rem;
-    overflow: hidden;
+[data-testid="stTable"] {
     border-radius: 7px;
-}
-
-.input-table th {
-    text-align: left;
-    padding: 0.65rem 0.8rem;
-    background-color: rgba(128,128,128,0.08);
-    color: var(--text-color);
-    font-weight: 600;
-    border: 1px solid rgba(128,128,128,0.18);
-}
-
-.input-table td {
-    padding: 0.65rem 0.8rem;
-    color: var(--text-color);
-    opacity: 0.72;
-    border: 1px solid rgba(128,128,128,0.15);
-}
-
-.input-table td:first-child {
-    font-weight: 500;
-    opacity: 0.85;
+    overflow: hidden;
 }
 
 
@@ -278,15 +241,11 @@ hr {
 @media (max-width: 800px) {
 
     .block-container {
-        padding-top: 2.5rem;
+        padding-top: 2rem;
     }
 
     .main-title {
         font-size: 2.1rem;
-    }
-
-    .input-table {
-        font-size: 0.76rem;
     }
 
 }
@@ -338,92 +297,71 @@ st.write(
 # PROCESSING INFORMATION
 # ============================================================
 
-processing_html = textwrap.dedent(
-    """
-    <div class="processing-box">
-        <div class="processing-title">
-            Processing includes:
-        </div>
+with st.container(border=True):
 
-        <div class="processing-item">
-            • Uses the PUBLICATION NUMBER cell as the hyperlink target.
-        </div>
+    st.markdown(
+        '<div class="processing-heading">Processing includes:</div>',
+        unsafe_allow_html=True
+    )
 
-        <div class="processing-item">
-            • Reads the actual hyperlink behind the ORBIT LINK cell, regardless of whether it displays "Open" or a patent number.
-        </div>
+    st.markdown(
+        """
+        <div class="processing-list">
 
-        <div class="processing-item">
-            • Dynamic mode sends US patents to Google Patents, Indian patents to their original Orbit link, and all other patents to New Espacenet.
-        </div>
+        - Uses the **PUBLICATION NUMBER** cell as the hyperlink target.
 
-        <div class="processing-item">
-            • Preserves the existing workbook data and columns.
-        </div>
+        - Reads the actual hyperlink behind the **ORBIT LINK** cell, regardless of whether it displays **"Open"** or a patent number.
 
-        <div class="processing-item">
-            • Only the PUBLICATION NUMBER cells are updated with hyperlinks.
-        </div>
-    </div>
-    """
-).strip()
+        - Dynamic mode sends **US patents to Google Patents**, **Indian patents to their original Orbit link**, and **all other patents to New Espacenet**.
 
-st.markdown(
-    processing_html,
-    unsafe_allow_html=True
-)
+        - Preserves the existing workbook data and columns.
+
+        - Only the **PUBLICATION NUMBER** cells are updated with hyperlinks.
+
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 
 # ============================================================
 # INPUT FILE FORMAT
 # ============================================================
 
-input_format_html = textwrap.dedent(
-    """
-    <div class="input-format-box">
+with st.container(border=True):
 
-        <div class="input-format-title">
-            Input file format
-        </div>
+    st.markdown(
+        '<div class="input-format-heading">Input file format</div>',
+        unsafe_allow_html=True
+    )
 
-        <table class="input-table">
+    input_example = pd.DataFrame(
+        {
+            "PUBLICATION NUMBER": [
+                "US12345678B2",
+                "IN123456A",
+                "EP1234567B1"
+            ],
+            "ORBIT LINK": [
+                "Open",
+                "Open",
+                "EP1234567B1"
+            ]
+        }
+    )
 
-            <tr>
-                <th>PUBLICATION NUMBER</th>
-                <th>ORBIT LINK</th>
-            </tr>
+    st.table(input_example)
 
-            <tr>
-                <td>US12345678B2</td>
-                <td>Open</td>
-            </tr>
-
-            <tr>
-                <td>IN123456A</td>
-                <td>Open</td>
-            </tr>
-
-            <tr>
-                <td>EP1234567B1</td>
-                <td>EP1234567B1</td>
-            </tr>
-
-        </table>
-
+    st.markdown(
+        """
         <div class="input-format-note">
-            The ORBIT LINK column must contain the actual Excel hyperlink
-            to the Orbit document. The visible text may be "Open" or the
-            patent publication number.
+        The <b>ORBIT LINK</b> column must contain the actual Excel
+        hyperlink to the Orbit document. The visible text may be
+        <b>"Open"</b> or the patent publication number.
         </div>
-
-    </div>
-    """
-).strip()
-
-st.markdown(
-    input_format_html,
-    unsafe_allow_html=True
-)
+        """,
+        unsafe_allow_html=True
+    )
 
 
 # ============================================================
@@ -513,16 +451,6 @@ def get_orbit_hyperlink(cell):
     Extract the actual hyperlink target from an Excel cell.
 
     The visible text is ignored.
-
-    Example:
-
-        Visible text: Open
-        Actual hyperlink: https://...
-
-    OR:
-
-        Visible text: US12345678B2
-        Actual hyperlink: https://...
     """
 
     if cell.hyperlink is None:
@@ -584,8 +512,6 @@ def create_target_url(
 
     if mode == "Dynamic":
 
-        # US → Google Patents
-
         if country == "US":
 
             return (
@@ -593,8 +519,6 @@ def create_target_url(
                 "Google Patents"
             )
 
-
-        # IN → Original Orbit Link
 
         if country == "IN":
 
@@ -610,8 +534,6 @@ def create_target_url(
                 "Missing Orbit Link"
             )
 
-
-        # Everything else → New Espacenet
 
         return (
             espacenet_url(patent),
@@ -722,8 +644,6 @@ def process_workbook(
         total_rows += 1
 
 
-        # Read actual Orbit hyperlink.
-
         orbit_link = get_orbit_hyperlink(
             orbit_cell
         )
@@ -735,10 +655,6 @@ def process_workbook(
             orbit_link
         )
 
-
-        # ----------------------------------------------------
-        # No destination
-        # ----------------------------------------------------
 
         if not target_url:
 
@@ -773,7 +689,7 @@ def process_workbook(
 
 
         # ----------------------------------------------------
-        # Statistics by destination
+        # Statistics
         # ----------------------------------------------------
 
         if destination == "Google Patents":
