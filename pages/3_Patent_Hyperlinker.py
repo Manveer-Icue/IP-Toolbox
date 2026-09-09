@@ -716,12 +716,15 @@ div[data-testid="stButton"] button[kind="primary"] {
     background-color: #EE3C18 !important;
     border: 1px solid #EE3C18 !important;
     min-height: 42px;
+    opacity: 1 !important;
 }
 
 div[data-testid="stButton"] button[kind="primary"] * {
     color: #FFFFFF !important;
     -webkit-text-fill-color: #FFFFFF !important;
+    opacity: 1 !important;
     font-weight: 700 !important;
+    text-shadow: none !important;
 }
 
 div[data-testid="stButton"] button[kind="primary"] p,
@@ -729,9 +732,10 @@ div[data-testid="stButton"] button[kind="primary"] span,
 div[data-testid="stButton"] button[kind="primary"] div {
     color: #FFFFFF !important;
     -webkit-text-fill-color: #FFFFFF !important;
+    opacity: 1 !important;
     font-weight: 700 !important;
+    text-shadow: none !important;
 }
-
 
 /* ------------------------------------------------------------
    DOWNLOAD BUTTON
