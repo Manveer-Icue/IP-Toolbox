@@ -49,7 +49,7 @@ st.markdown(
 }
 
 .block-container {
-    max-width: 1180px;
+    max-width: 1400px;
     padding-top: 4rem;
     padding-bottom: 3rem;
 }
@@ -91,34 +91,36 @@ st.markdown(
 
 
 /* ============================================================
-   TOOL ROW
+   RESPONSIVE COLUMN BEHAVIOR
+   ------------------------------------------------------------
+   Each column gets a minimum width. When the viewport is too
+   narrow to fit them side by side, Streamlit (with wrap=True)
+   wraps them onto new rows automatically - so cards never
+   squeeze narrower than this, and never overflow the page.
    ============================================================ */
 
 [data-testid="stHorizontalBlock"] {
-    width: 100% !important;
+    row-gap: 1.5rem !important;
+}
+
+[data-testid="column"] {
+    min-width: 260px !important;
+    flex: 1 1 260px !important;
 }
 
 
 /* ============================================================
-   TOOL CARD WRAPPER
-   ============================================================ */
-
-.tool-wrapper {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-
-/* ============================================================
-   TOOL CARDS
+   TOOL CARD
+   ------------------------------------------------------------
+   No fixed height and no overflow:hidden - the card grows to
+   fit its content instead of clipping it. Cards in the same
+   row still line up evenly because Streamlit's row is a flex
+   container with stretch alignment by default.
    ============================================================ */
 
 .tool-card {
     width: 100%;
-    height: 390px;
-    min-height: 390px;
-    max-height: 390px;
+    min-height: 300px;
 
     box-sizing: border-box;
 
@@ -132,8 +134,6 @@ st.markdown(
 
     display: flex;
     flex-direction: column;
-
-    overflow: hidden;
 
     transition:
         transform 0.18s ease,
@@ -159,27 +159,17 @@ st.markdown(
 
 
 /* ============================================================
-   TOOL NAME AREA
+   TOOL NAME
+   ------------------------------------------------------------
+   No fixed height - long two/three-line names simply take the
+   space they need instead of being clipped.
    ============================================================ */
-
-.tool-name-area {
-    height: 92px;
-    min-height: 92px;
-
-    display: flex;
-    align-items: flex-start;
-
-    flex-shrink: 0;
-}
 
 .tool-name-box {
     width: 100%;
-    min-height: 61px;
     box-sizing: border-box;
 
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
+    display: inline-block;
 
     background-color: #FFF0EC;
     color: #EE3C18;
@@ -191,10 +181,10 @@ st.markdown(
 
     font-size: 1rem;
     font-weight: 600;
-    line-height: 1.2;
+    line-height: 1.3;
     letter-spacing: -0.015em;
 
-    overflow: hidden;
+    margin-bottom: 0.9rem;
 }
 
 .tool-name-box-disabled {
@@ -207,17 +197,6 @@ st.markdown(
 /* ============================================================
    STATUS
    ============================================================ */
-
-.status-area {
-    height: 31px;
-    min-height: 31px;
-
-    display: flex;
-    align-items: flex-start;
-    flex-shrink: 0;
-
-    margin-bottom: 0.25rem;
-}
 
 .status-live {
     display: inline-flex;
@@ -238,6 +217,8 @@ st.markdown(
     text-transform: uppercase;
 
     white-space: nowrap;
+
+    margin-bottom: 0.75rem;
 }
 
 .status-pending {
@@ -259,59 +240,47 @@ st.markdown(
     text-transform: uppercase;
 
     white-space: nowrap;
+
+    margin-bottom: 0.75rem;
 }
 
 .status-dot-live {
     width: 5px;
     height: 5px;
-
     flex-shrink: 0;
-
     border-radius: 50%;
-
     background-color: #EE3C18;
 }
 
 .status-dot-pending {
     width: 5px;
     height: 5px;
-
     flex-shrink: 0;
-
     border-radius: 50%;
-
     background-color: #9A9DA0;
 }
 
 
 /* ============================================================
    DESCRIPTION
+   ------------------------------------------------------------
+   flex: 1 pushes the button (rendered after the card closes)
+   to align consistently near the bottom across a row, without
+   ever clipping the text itself.
    ============================================================ */
 
 .tool-desc {
     font-size: 0.88rem;
     line-height: 1.6;
     color: #74787D;
-
     flex: 1;
-    min-height: 0;
-
-    padding-top: 0.1rem;
-
-    overflow: hidden;
 }
 
 .tool-desc-pending {
     font-size: 0.88rem;
     line-height: 1.6;
     color: #96999D;
-
     flex: 1;
-    min-height: 0;
-
-    padding-top: 0.1rem;
-
-    overflow: hidden;
 }
 
 
@@ -337,6 +306,7 @@ div[data-testid="stButton"] button {
     padding: 0.42rem 0.85rem;
 
     min-height: 36px;
+    width: 100%;
 
     transition: all 0.15s ease;
 }
@@ -360,7 +330,6 @@ div[data-testid="stButton"] button:focus {
 .footer-rule {
     border: none;
     border-top: 1px solid #E2E2DF;
-
     margin-top: 2.7rem;
     margin-bottom: 1.1rem;
 }
@@ -376,19 +345,18 @@ div[data-testid="stButton"] button:focus {
    ============================================================ */
 
 @media (max-width: 900px) {
-
     .block-container {
         padding-top: 2.5rem;
     }
-
     .toolbox-wordmark {
         font-size: 2.1rem;
     }
+}
 
-    .tool-card {
-        height: 390px;
-        min-height: 390px;
-        max-height: 390px;
+@media (max-width: 480px) {
+    [data-testid="column"] {
+        min-width: 100% !important;
+        flex: 1 1 100% !important;
     }
 }
 
@@ -426,7 +394,7 @@ st.markdown(
 col1, col2, col3, col4, col5 = st.columns(
     5,
     gap="large",
-    wrap=False
+    wrap=True
 )
 
 
@@ -438,29 +406,21 @@ with col1:
 
     st.markdown(
         """
-<div class="tool-wrapper">
-
 <div class="tool-card">
 
-<div class="tool-name-area">
 <div class="tool-name-box">
 Assignee Normalizer
 </div>
-</div>
 
-<div class="status-area">
 <span class="status-live">
 <span class="status-dot-live"></span>
 Live
 </span>
-</div>
 
 <div class="tool-desc">
 Resolves inconsistent parent assignee names using AI,
 including corporate entity matching, subsidiary detection,
 and ultimate parent identification.
-</div>
-
 </div>
 
 </div>
@@ -483,28 +443,20 @@ with col2:
 
     st.markdown(
         """
-<div class="tool-wrapper">
-
 <div class="tool-card">
 
-<div class="tool-name-area">
 <div class="tool-name-box">
 Patent Category Mapper
 </div>
-</div>
 
-<div class="status-area">
 <span class="status-live">
 <span class="status-dot-live"></span>
 Live
 </span>
-</div>
 
 <div class="tool-desc">
 Converts patent categorization data into individual
 category columns and marks applicable patents with Y.
-</div>
-
 </div>
 
 </div>
@@ -529,29 +481,21 @@ with col3:
 
     st.markdown(
         """
-<div class="tool-wrapper">
-
 <div class="tool-card">
 
-<div class="tool-name-area">
 <div class="tool-name-box">
 Patent Hyperlinker
 </div>
-</div>
 
-<div class="status-area">
 <span class="status-live">
 <span class="status-dot-live"></span>
 Live
 </span>
-</div>
 
 <div class="tool-desc">
 Creates clickable patent links using Google Patents,
 New Espacenet, or the original Orbit document link,
 with dynamic routing based on patent country.
-</div>
-
 </div>
 
 </div>
@@ -576,29 +520,21 @@ with col4:
 
     st.markdown(
         """
-<div class="tool-wrapper">
-
 <div class="tool-card tool-card-disabled">
 
-<div class="tool-name-area">
 <div class="tool-name-box tool-name-box-disabled">
 FTO Claim Screening
 </div>
-</div>
 
-<div class="status-area">
 <span class="status-pending">
 <span class="status-dot-pending"></span>
 In progress
 </span>
-</div>
 
 <div class="tool-desc-pending">
 Supports freedom-to-operate research by helping researchers
 identify and evaluate relevant patent claims and supporting
 rationale.
-</div>
-
 </div>
 
 </div>
@@ -615,27 +551,19 @@ with col5:
 
     st.markdown(
         """
-<div class="tool-wrapper">
-
 <div class="tool-card tool-card-disabled">
 
-<div class="tool-name-area">
 <div class="tool-name-box tool-name-box-disabled">
 Sample
 </div>
-</div>
 
-<div class="status-area">
 <span class="status-pending">
 <span class="status-dot-pending"></span>
 Coming soon
 </span>
-</div>
 
 <div class="tool-desc-pending">
 New tool ideas arising from different research requirements.
-</div>
-
 </div>
 
 </div>
