@@ -1,13 +1,11 @@
 import streamlit as st
 from auth import require_password
 
-
 st.set_page_config(
     page_title="IP Toolbox",
     page_icon="📇",
     layout="wide"
 )
-
 
 # ============================================================
 # HIDE SIDEBAR
@@ -51,7 +49,7 @@ st.markdown(
 }
 
 .block-container {
-    max-width: 1400px;
+    max-width: 1180px;
     padding-top: 4rem;
     padding-bottom: 3rem;
 }
@@ -93,63 +91,60 @@ st.markdown(
 
 
 /* ============================================================
-   TOOL ROW
+   AVAILABLE TOOLS LAYOUT
    ============================================================ */
 
 [data-testid="stHorizontalBlock"] {
-    width: 100% !important;
-    row-gap: 1.5rem !important;
+    flex-wrap: wrap !important;
+    gap: 1.5rem !important;
     align-items: stretch !important;
 }
 
 
-/*
-   IMPORTANT:
-   Do not force a minimum pixel width on Streamlit columns.
-   Doing so causes the cards to overflow/overlap when the
-   browser width changes.
-*/
+/* ============================================================
+   TOOL COLUMNS
+   ============================================================ */
 
-[data-testid="column"] {
-    display: flex !important;
-    flex-direction: column !important;
-}
-
-[data-testid="column"] > div {
-    display: flex !important;
-    flex-direction: column !important;
-    flex: 1 !important;
-}
-
-[data-testid="column"] [data-testid="stVerticalBlock"] {
-    flex: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
+[data-testid="stHorizontalBlock"] > [data-testid="column"],
+[data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
 }
 
 
 /* ============================================================
-   TOOL CARD
+   TOOL CARD WRAPPER
+   ============================================================ */
+
+.tool-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* ============================================================
+   TOOL CARDS
    ============================================================ */
 
 .tool-card {
     width: 100%;
-    height: 360px;
-    min-height: 360px;
-    max-height: 360px;
-
+    height: 390px;
+    min-height: 390px;
     box-sizing: border-box;
 
     background-color: #FFFFFF;
     border: 1px solid #E3E3E0;
     border-radius: 12px;
 
-    padding: 1.5rem;
+    padding: 1.5rem 1.5rem 1.35rem 1.5rem;
 
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.035);
 
     display: flex;
     flex-direction: column;
+
+    overflow: hidden;
 
     transition:
         transform 0.18s ease,
@@ -175,16 +170,25 @@ st.markdown(
 
 
 /* ============================================================
-   TOOL NAME
+   TOOL NAME AREA
    ============================================================ */
+
+.tool-name-area {
+    height: 92px;
+    min-height: 92px;
+    display: flex;
+    align-items: flex-start;
+    flex-shrink: 0;
+}
 
 .tool-name-box {
     width: 100%;
-    min-height: 80px;
+    min-height: 61px;
     box-sizing: border-box;
 
     display: flex;
     align-items: center;
+    justify-content: flex-start;
 
     background-color: #FFF0EC;
     color: #EE3C18;
@@ -196,10 +200,10 @@ st.markdown(
 
     font-size: 1rem;
     font-weight: 600;
-    line-height: 1.3;
+    line-height: 1.2;
     letter-spacing: -0.015em;
 
-    margin-bottom: 0.9rem;
+    overflow-wrap: break-word;
 }
 
 .tool-name-box-disabled {
@@ -212,6 +216,17 @@ st.markdown(
 /* ============================================================
    STATUS
    ============================================================ */
+
+.status-area {
+    height: 31px;
+    min-height: 31px;
+
+    display: flex;
+    align-items: flex-start;
+    flex-shrink: 0;
+
+    margin-bottom: 0.25rem;
+}
 
 .status-live {
     display: inline-flex;
@@ -232,8 +247,6 @@ st.markdown(
     text-transform: uppercase;
 
     white-space: nowrap;
-
-    margin-bottom: 0.75rem;
 }
 
 .status-pending {
@@ -255,23 +268,29 @@ st.markdown(
     text-transform: uppercase;
 
     white-space: nowrap;
-
-    margin-bottom: 0.75rem;
 }
 
 .status-dot-live {
     width: 5px;
     height: 5px;
-    flex-shrink: 0;
+
+    min-width: 5px;
+    min-height: 5px;
+
     border-radius: 50%;
+
     background-color: #EE3C18;
 }
 
 .status-dot-pending {
     width: 5px;
     height: 5px;
-    flex-shrink: 0;
+
+    min-width: 5px;
+    min-height: 5px;
+
     border-radius: 50%;
+
     background-color: #9A9DA0;
 }
 
@@ -284,21 +303,44 @@ st.markdown(
     font-size: 0.88rem;
     line-height: 1.6;
     color: #74787D;
+
     flex: 1;
-    min-height: 0;
+
+    padding-top: 0.1rem;
+
+    overflow-wrap: break-word;
+    word-break: normal;
 }
 
 .tool-desc-pending {
     font-size: 0.88rem;
     line-height: 1.6;
     color: #96999D;
+
     flex: 1;
-    min-height: 0;
+
+    padding-top: 0.1rem;
+
+    overflow-wrap: break-word;
+    word-break: normal;
 }
 
 
 /* ============================================================
-   BUTTON
+   BUTTON AREA
+   ============================================================ */
+
+.tool-button-area {
+    height: 42px;
+    min-height: 42px;
+
+    display: flex;
+    align-items: flex-end;
+}
+
+
+/* ============================================================
+   STREAMLIT BUTTON
    ============================================================ */
 
 div[data-testid="stButton"] {
@@ -342,6 +384,7 @@ div[data-testid="stButton"] button:focus {
 .footer-rule {
     border: none;
     border-top: 1px solid #E2E2DF;
+
     margin-top: 2.7rem;
     margin-bottom: 1.1rem;
 }
@@ -356,6 +399,21 @@ div[data-testid="stButton"] button:focus {
    RESPONSIVE
    ============================================================ */
 
+
+/* MEDIUM SCREENS: 3 CARDS PER ROW */
+
+@media (max-width: 1500px) {
+
+    [data-testid="stHorizontalBlock"] > [data-testid="column"],
+    [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+        flex: 0 0 calc((100% - 3rem) / 3) !important;
+        min-width: calc((100% - 3rem) / 3) !important;
+    }
+}
+
+
+/* TABLET: 2 CARDS PER ROW */
+
 @media (max-width: 900px) {
 
     .block-container {
@@ -365,19 +423,36 @@ div[data-testid="stButton"] button:focus {
     .toolbox-wordmark {
         font-size: 2.1rem;
     }
-}
 
-@media (max-width: 480px) {
+    [data-testid="stHorizontalBlock"] {
+        gap: 1.25rem !important;
+    }
 
-    [data-testid="column"] {
-        min-width: 100% !important;
-        flex: 1 1 100% !important;
+    [data-testid="stHorizontalBlock"] > [data-testid="column"],
+    [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+        flex: 0 0 calc((100% - 1.25rem) / 2) !important;
+        min-width: calc((100% - 1.25rem) / 2) !important;
     }
 
     .tool-card {
-        height: auto;
-        min-height: 320px;
-        max-height: none;
+        height: 390px;
+        min-height: 390px;
+    }
+}
+
+
+/* MOBILE: 1 CARD PER ROW */
+
+@media (max-width: 600px) {
+
+    [data-testid="stHorizontalBlock"] {
+        gap: 1rem !important;
+    }
+
+    [data-testid="stHorizontalBlock"] > [data-testid="column"],
+    [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+        flex: 0 0 100% !important;
+        min-width: 100% !important;
     }
 }
 
@@ -412,12 +487,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
-col1, col2, col3, col4, col5 = st.columns(
-    5,
-    gap="large",
-    wrap=True
-)
+col1, col2, col3, col4, col5 = st.columns(5, gap="large")
 
 
 # ============================================================
@@ -428,21 +498,29 @@ with col1:
 
     st.markdown(
         """
+<div class="tool-wrapper">
+
 <div class="tool-card">
 
+<div class="tool-name-area">
 <div class="tool-name-box">
 Assignee Normalizer
 </div>
+</div>
 
+<div class="status-area">
 <span class="status-live">
 <span class="status-dot-live"></span>
 Live
 </span>
+</div>
 
 <div class="tool-desc">
 Resolves inconsistent parent assignee names using AI,
 including corporate entity matching, subsidiary detection,
 and ultimate parent identification.
+</div>
+
 </div>
 
 </div>
@@ -465,20 +543,28 @@ with col2:
 
     st.markdown(
         """
+<div class="tool-wrapper">
+
 <div class="tool-card">
 
+<div class="tool-name-area">
 <div class="tool-name-box">
 Patent Category Mapper
 </div>
+</div>
 
+<div class="status-area">
 <span class="status-live">
 <span class="status-dot-live"></span>
 Live
 </span>
+</div>
 
 <div class="tool-desc">
 Converts patent categorization data into individual
 category columns and marks applicable patents with Y.
+</div>
+
 </div>
 
 </div>
@@ -503,21 +589,29 @@ with col3:
 
     st.markdown(
         """
+<div class="tool-wrapper">
+
 <div class="tool-card">
 
+<div class="tool-name-area">
 <div class="tool-name-box">
 Patent Hyperlinker
 </div>
+</div>
 
+<div class="status-area">
 <span class="status-live">
 <span class="status-dot-live"></span>
 Live
 </span>
+</div>
 
 <div class="tool-desc">
 Creates clickable patent links using Google Patents,
 New Espacenet, or the original Orbit document link,
 with dynamic routing based on patent country.
+</div>
+
 </div>
 
 </div>
@@ -542,21 +636,29 @@ with col4:
 
     st.markdown(
         """
+<div class="tool-wrapper">
+
 <div class="tool-card tool-card-disabled">
 
+<div class="tool-name-area">
 <div class="tool-name-box tool-name-box-disabled">
 FTO Claim Screening
 </div>
+</div>
 
+<div class="status-area">
 <span class="status-pending">
 <span class="status-dot-pending"></span>
 In progress
 </span>
+</div>
 
 <div class="tool-desc-pending">
 Supports freedom-to-operate research by helping researchers
 identify and evaluate relevant patent claims and supporting
 rationale.
+</div>
+
 </div>
 
 </div>
@@ -573,19 +675,27 @@ with col5:
 
     st.markdown(
         """
+<div class="tool-wrapper">
+
 <div class="tool-card tool-card-disabled">
 
+<div class="tool-name-area">
 <div class="tool-name-box tool-name-box-disabled">
 Sample
 </div>
+</div>
 
+<div class="status-area">
 <span class="status-pending">
 <span class="status-dot-pending"></span>
 Coming soon
 </span>
+</div>
 
 <div class="tool-desc-pending">
 New tool ideas arising from different research requirements.
+</div>
+
 </div>
 
 </div>
