@@ -707,18 +707,51 @@ div[data-testid="stButton"] button:hover {
     color: #EE3C18;
 }
 
+
+/* ------------------------------------------------------------
+   PRIMARY BUTTON
+   ------------------------------------------------------------ */
+
 div[data-testid="stButton"] button[kind="primary"] {
-    background-color: #EE3C18;
-    border: 1px solid #EE3C18;
+    background-color: #EE3C18 !important;
+    border: 1px solid #EE3C18 !important;
     color: #FFFFFF !important;
-    font-weight: 600;
+    font-weight: 600 !important;
     min-height: 42px;
 }
 
+div[data-testid="stButton"] button[kind="primary"] *,
 div[data-testid="stButton"] button[kind="primary"] p,
 div[data-testid="stButton"] button[kind="primary"] span,
-div[data-testid="stButton"] button[kind="primary"] div {
+div[data-testid="stButton"] button[kind="primary"] div,
+div[data-testid="stButton"] button[kind="primary"] svg {
     color: #FFFFFF !important;
+    fill: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+}
+
+
+/* ------------------------------------------------------------
+   DOWNLOAD BUTTON
+   ------------------------------------------------------------ */
+
+div[data-testid="stDownloadButton"] button {
+    background-color: #EE3C18 !important;
+    border: 1px solid #EE3C18 !important;
+    color: #FFFFFF !important;
+    border-radius: 8px;
+    font-weight: 600 !important;
+    min-height: 42px;
+}
+
+div[data-testid="stDownloadButton"] button *,
+div[data-testid="stDownloadButton"] button p,
+div[data-testid="stDownloadButton"] button span,
+div[data-testid="stDownloadButton"] button div,
+div[data-testid="stDownloadButton"] button svg {
+    color: #FFFFFF !important;
+    fill: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
 }
 
 
