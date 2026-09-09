@@ -87,12 +87,12 @@ st.markdown(
 
 
 /* ============================================================
-   PROCESSING INFORMATION
+   INFORMATION BOX
    ============================================================ */
 
 .processing-box {
     margin-top: 1.25rem;
-    margin-bottom: 2.2rem;
+    margin-bottom: 1.4rem;
     padding: 1.15rem 1.5rem;
     background-color: var(--secondary-background-color);
     border: 1px solid rgba(128,128,128,0.20);
@@ -102,15 +102,88 @@ st.markdown(
 .processing-title {
     font-weight: 600;
     color: var(--text-color);
-    margin-bottom: 0.65rem;
+    margin-bottom: 0.75rem;
 }
 
-.processing-list {
-    margin: 0;
-    padding-left: 1.35rem;
+.processing-item {
     color: var(--text-color);
     opacity: 0.70;
     line-height: 1.65;
+    margin-bottom: 0.35rem;
+    padding-left: 0.15rem;
+}
+
+.processing-item:last-child {
+    margin-bottom: 0;
+}
+
+
+/* ============================================================
+   INPUT FORMAT BOX
+   ============================================================ */
+
+.input-format-box {
+    margin-top: 0.9rem;
+    margin-bottom: 2.2rem;
+    padding: 1.15rem 1.5rem;
+
+    background-color: var(--secondary-background-color);
+
+    border: 1px solid rgba(128,128,128,0.20);
+    border-radius: 10px;
+}
+
+.input-format-title {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.75rem;
+}
+
+.input-format-note {
+    font-size: 0.82rem;
+    color: var(--text-color);
+    opacity: 0.65;
+    margin-top: 0.75rem;
+    line-height: 1.55;
+}
+
+
+/* ============================================================
+   INPUT TABLE
+   ============================================================ */
+
+.input-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.84rem;
+    overflow: hidden;
+    border-radius: 7px;
+}
+
+.input-table th {
+    text-align: left;
+    padding: 0.65rem 0.8rem;
+
+    background-color: rgba(128,128,128,0.08);
+
+    color: var(--text-color);
+    font-weight: 600;
+
+    border: 1px solid rgba(128,128,128,0.18);
+}
+
+.input-table td {
+    padding: 0.65rem 0.8rem;
+
+    color: var(--text-color);
+    opacity: 0.72;
+
+    border: 1px solid rgba(128,128,128,0.15);
+}
+
+.input-table td:first-child {
+    font-weight: 500;
+    opacity: 0.85;
 }
 
 
@@ -226,6 +299,11 @@ hr {
     .main-title {
         font-size: 2.1rem;
     }
+
+    .input-table {
+        font-size: 0.76rem;
+    }
+
 }
 
 </style>
@@ -278,15 +356,79 @@ st.write(
 st.markdown(
     """
     <div class="processing-box">
-        <div class="processing-title">Processing includes:</div>
 
-        <ul class="processing-list">
-            <li>Uses the publication number as the hyperlink target cell.</li>
-            <li>Reads the actual hyperlink behind the ORBIT LINK cell, regardless of whether it displays "Open" or a patent number.</li>
-            <li>Dynamic mode sends US patents to Google Patents, Indian patents to their original Orbit link, and all other patents to New Espacenet.</li>
-            <li>Preserves the existing workbook data and columns.</li>
-            <li>Only the PUBLICATION NUMBER cells are updated with hyperlinks.</li>
-        </ul>
+        <div class="processing-title">
+            Processing includes:
+        </div>
+
+        <div class="processing-item">
+            • Uses the PUBLICATION NUMBER cell as the hyperlink target.
+        </div>
+
+        <div class="processing-item">
+            • Reads the actual hyperlink behind the ORBIT LINK cell, regardless of whether it displays "Open" or a patent number.
+        </div>
+
+        <div class="processing-item">
+            • Dynamic mode sends US patents to Google Patents, Indian patents to their original Orbit link, and all other patents to New Espacenet.
+        </div>
+
+        <div class="processing-item">
+            • Preserves the existing workbook data and columns.
+        </div>
+
+        <div class="processing-item">
+            • Only the PUBLICATION NUMBER cells are updated with hyperlinks.
+        </div>
+
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+
+# ============================================================
+# INPUT FILE FORMAT
+# ============================================================
+
+st.markdown(
+    """
+    <div class="input-format-box">
+
+        <div class="input-format-title">
+            Input file format
+        </div>
+
+        <table class="input-table">
+
+            <tr>
+                <th>PUBLICATION NUMBER</th>
+                <th>ORBIT LINK</th>
+            </tr>
+
+            <tr>
+                <td>US12345678B2</td>
+                <td>Open</td>
+            </tr>
+
+            <tr>
+                <td>IN123456A</td>
+                <td>Open</td>
+            </tr>
+
+            <tr>
+                <td>EP1234567B1</td>
+                <td>EP1234567B1</td>
+            </tr>
+
+        </table>
+
+        <div class="input-format-note">
+            The ORBIT LINK column must contain the actual Excel hyperlink
+            to the Orbit document. The visible text may be "Open" or the
+            patent publication number.
+        </div>
+
     </div>
     """,
     unsafe_allow_html=True
@@ -304,6 +446,7 @@ def clean_value(value):
         return ""
 
     if isinstance(value, float):
+
         if value.is_integer():
             return str(int(value))
 
@@ -312,13 +455,8 @@ def clean_value(value):
 
 def normalize_patent_number(value):
     """
-    Normalize a patent number sufficiently for country detection
+    Normalize a patent number for country detection
     and URL construction.
-
-    Examples:
-        US12369069B2 -> US12369069B2
-        US 12,369,069 B2 -> US12369069B2
-        IN 123456 A -> IN123456A
     """
 
     value = clean_value(value)
@@ -331,9 +469,11 @@ def normalize_patent_number(value):
 
 
 def get_country_code(patent_number):
-    """Extract the two-letter country code from a publication number."""
+    """Extract the two-letter country code."""
 
-    normalized = normalize_patent_number(patent_number)
+    normalized = normalize_patent_number(
+        patent_number
+    )
 
     match = re.match(
         r"^([A-Z]{2})",
@@ -347,9 +487,11 @@ def get_country_code(patent_number):
 
 
 def google_patents_url(patent_number):
-    """Create a Google Patents URL."""
+    """Create Google Patents URL."""
 
-    patent = normalize_patent_number(patent_number)
+    patent = normalize_patent_number(
+        patent_number
+    )
 
     return (
         f"https://patents.google.com/patent/"
@@ -358,9 +500,11 @@ def google_patents_url(patent_number):
 
 
 def espacenet_url(patent_number):
-    """Create a New Espacenet search URL using the publication number."""
+    """Create New Espacenet search URL."""
 
-    patent = normalize_patent_number(patent_number)
+    patent = normalize_patent_number(
+        patent_number
+    )
 
     query = quote(
         f"pn={patent}",
@@ -377,12 +521,16 @@ def get_orbit_hyperlink(cell):
     """
     Extract the actual hyperlink target from an Excel cell.
 
-    This deliberately uses the hyperlink attached to the cell,
-    not the visible text.
+    The visible text is ignored.
 
-    Therefore it works for:
-        Open -> [Orbit URL]
-        US1234567B2 -> [Orbit URL]
+    Example:
+        Visible text: Open
+        Actual hyperlink: https://...
+
+    OR:
+
+        Visible text: US12345678B2
+        Actual hyperlink: https://...
     """
 
     if cell.hyperlink is None:
@@ -396,20 +544,34 @@ def get_orbit_hyperlink(cell):
     return ""
 
 
-def create_target_url(patent_number, mode, orbit_link):
+def create_target_url(
+    patent_number,
+    mode,
+    orbit_link
+):
     """
-    Determine the destination URL based on the selected mode.
+    Determine the destination URL.
     """
 
-    patent = normalize_patent_number(patent_number)
-    country = get_country_code(patent)
+    patent = normalize_patent_number(
+        patent_number
+    )
+
+    country = get_country_code(
+        patent
+    )
+
 
     # --------------------------------------------------------
     # GOOGLE PATENTS
     # --------------------------------------------------------
 
     if mode == "Google Patents":
-        return google_patents_url(patent), "Google Patents"
+
+        return (
+            google_patents_url(patent),
+            "Google Patents"
+        )
 
 
     # --------------------------------------------------------
@@ -417,7 +579,11 @@ def create_target_url(patent_number, mode, orbit_link):
     # --------------------------------------------------------
 
     if mode == "New Espacenet":
-        return espacenet_url(patent), "New Espacenet"
+
+        return (
+            espacenet_url(patent),
+            "New Espacenet"
+        )
 
 
     # --------------------------------------------------------
@@ -426,23 +592,45 @@ def create_target_url(patent_number, mode, orbit_link):
 
     if mode == "Dynamic":
 
-        # US -> Google Patents
-        if country == "US":
-            return google_patents_url(patent), "Google Patents"
+        # US → Google Patents
 
-        # IN -> Original Orbit link
+        if country == "US":
+
+            return (
+                google_patents_url(patent),
+                "Google Patents"
+            )
+
+
+        # IN → Original Orbit Link
+
         if country == "IN":
 
             if orbit_link:
-                return orbit_link, "Original Orbit Link"
 
-            return "", "Missing Orbit Link"
+                return (
+                    orbit_link,
+                    "Original Orbit Link"
+                )
 
-        # Everything else -> New Espacenet
-        return espacenet_url(patent), "New Espacenet"
+            return (
+                "",
+                "Missing Orbit Link"
+            )
 
 
-    return "", "No Link"
+        # Everything else → New Espacenet
+
+        return (
+            espacenet_url(patent),
+            "New Espacenet"
+        )
+
+
+    return (
+        "",
+        "No Link"
+    )
 
 
 def process_workbook(
@@ -452,10 +640,7 @@ def process_workbook(
     mode
 ):
     """
-    Process the uploaded workbook and return:
-
-        output BytesIO
-        statistics dictionary
+    Process uploaded workbook.
     """
 
     uploaded_file.seek(0)
@@ -480,15 +665,24 @@ def process_workbook(
     ):
 
         value = clean_value(
-            worksheet.cell(1, col).value
+            worksheet.cell(
+                1,
+                col
+            ).value
         )
 
         if value:
+
             headers[value] = col
 
 
-    patent_col_index = headers[patent_column]
-    orbit_col_index = headers[orbit_column]
+    patent_col_index = headers[
+        patent_column
+    ]
+
+    orbit_col_index = headers[
+        orbit_column
+    ]
 
 
     # --------------------------------------------------------
@@ -528,13 +722,16 @@ def process_workbook(
             patent_cell.value
         )
 
+
         if not patent_number:
             continue
+
 
         total_rows += 1
 
 
-        # Read actual hyperlink from Orbit cell.
+        # Read actual Orbit hyperlink.
+
         orbit_link = get_orbit_hyperlink(
             orbit_cell
         )
@@ -547,19 +744,23 @@ def process_workbook(
         )
 
 
-        # No destination available.
+        # ----------------------------------------------------
+        # No destination
+        # ----------------------------------------------------
+
         if not target_url:
 
             skipped_rows += 1
 
             if destination == "Missing Orbit Link":
+
                 missing_orbit_count += 1
 
             continue
 
 
         # ----------------------------------------------------
-        # Remove any previous hyperlink from publication cell
+        # Remove existing hyperlink
         # ----------------------------------------------------
 
         patent_cell.hyperlink = None
@@ -571,37 +772,46 @@ def process_workbook(
 
         patent_cell.hyperlink = target_url
 
-        # Keep the existing displayed patent number.
         patent_cell.value = patent_number
 
-        # Excel hyperlink appearance.
         patent_cell.style = "Hyperlink"
+
 
         linked_rows += 1
 
 
+        # ----------------------------------------------------
+        # Statistics by destination
+        # ----------------------------------------------------
+
         if destination == "Google Patents":
+
             google_count += 1
 
         elif destination == "New Espacenet":
+
             espacenet_count += 1
 
         elif destination == "Original Orbit Link":
+
             orbit_count += 1
 
 
     # --------------------------------------------------------
-    # Preserve useful Excel usability features
+    # Excel usability
     # --------------------------------------------------------
 
     worksheet.freeze_panes = "A2"
 
     if worksheet.max_row >= 1:
-        worksheet.auto_filter.ref = worksheet.dimensions
+
+        worksheet.auto_filter.ref = (
+            worksheet.dimensions
+        )
 
 
     # --------------------------------------------------------
-    # Save workbook
+    # Save
     # --------------------------------------------------------
 
     output = BytesIO()
@@ -621,6 +831,7 @@ def process_workbook(
         "missing_orbit_count": missing_orbit_count,
     }
 
+
     return output, statistics
 
 
@@ -628,7 +839,9 @@ def process_workbook(
 # FILE UPLOAD
 # ============================================================
 
-st.markdown("### Upload Excel File")
+st.markdown(
+    "### Upload Excel File"
+)
 
 uploaded_file = st.file_uploader(
     "Upload your Excel workbook",
@@ -657,9 +870,12 @@ if uploaded_file is not None:
             keep_links=True
         )
 
-        preview_sheet = preview_workbook.active
+        preview_sheet = (
+            preview_workbook.active
+        )
 
         available_columns = []
+
 
         for col in range(
             1,
@@ -674,15 +890,21 @@ if uploaded_file is not None:
             )
 
             if value:
-                available_columns.append(value)
+
+                available_columns.append(
+                    value
+                )
+
 
         preview_workbook.close()
 
 
         if not available_columns:
+
             st.error(
                 "No column headers were found in Row 1."
             )
+
             st.stop()
 
 
@@ -690,7 +912,9 @@ if uploaded_file is not None:
         # COLUMN SELECTION
         # ----------------------------------------------------
 
-        st.markdown("### Column Selection")
+        st.markdown(
+            "### Column Selection"
+        )
 
         col1, col2 = st.columns(2)
 
@@ -699,11 +923,14 @@ if uploaded_file is not None:
 
             default_patent_index = 0
 
+
             for idx, name in enumerate(
                 available_columns
             ):
 
-                if normalize_patent_number(name) in [
+                if normalize_patent_number(
+                    name
+                ) in [
                     "PUBLICATIONNUMBER",
                     "PATENTNUMBER",
                     "PUBLICATIONNO",
@@ -711,6 +938,7 @@ if uploaded_file is not None:
                 ]:
 
                     default_patent_index = idx
+
                     break
 
 
@@ -725,13 +953,17 @@ if uploaded_file is not None:
 
             default_orbit_index = 0
 
+
             for idx, name in enumerate(
                 available_columns
             ):
 
-                normalized_name = normalize_patent_number(
-                    name
+                normalized_name = (
+                    normalize_patent_number(
+                        name
+                    )
                 )
+
 
                 if normalized_name in [
                     "ORBITLINK",
@@ -740,6 +972,7 @@ if uploaded_file is not None:
                 ]:
 
                     default_orbit_index = idx
+
                     break
 
 
@@ -754,7 +987,10 @@ if uploaded_file is not None:
         # LINKING MODE
         # ----------------------------------------------------
 
-        st.markdown("### Linking Mode")
+        st.markdown(
+            "### Linking Mode"
+        )
+
 
         mode = st.selectbox(
             "Select hyperlinking mode",
@@ -775,12 +1011,14 @@ if uploaded_file is not None:
                 "All other patents → New Espacenet"
             )
 
+
         elif mode == "Google Patents":
 
             st.info(
                 "All publication numbers will be linked "
                 "to Google Patents."
             )
+
 
         else:
 
@@ -927,7 +1165,7 @@ if run_button:
 
 
         # ----------------------------------------------------
-        # WARNING FOR MISSING INDIAN ORBIT LINKS
+        # MISSING ORBIT WARNING
         # ----------------------------------------------------
 
         if stats["missing_orbit_count"] > 0:
@@ -958,6 +1196,7 @@ if run_button:
 
 
         original_name = uploaded_file.name
+
 
         if original_name.lower().endswith(".xlsx"):
 
