@@ -96,6 +96,9 @@ def get_orbit_hyperlink(cell):
     The visible text is ignored.
     """
 
+    if cell is None:
+        return ""
+
     if cell.hyperlink is None:
         return ""
 
@@ -236,9 +239,17 @@ def process_workbook(
         patent_column
     ]
 
-    orbit_col_index = headers[
-        orbit_column
-    ]
+
+    # ORBIT LINK is optional
+    if orbit_column and orbit_column != "None":
+
+        orbit_col_index = headers.get(
+            orbit_column
+        )
+
+    else:
+
+        orbit_col_index = None
 
 
     # --------------------------------------------------------
@@ -269,10 +280,18 @@ def process_workbook(
             patent_col_index
         )
 
-        orbit_cell = worksheet.cell(
-            row,
-            orbit_col_index
-        )
+
+        if orbit_col_index is not None:
+
+            orbit_cell = worksheet.cell(
+                row,
+                orbit_col_index
+            )
+
+        else:
+
+            orbit_cell = None
+
 
         patent_number = clean_value(
             patent_cell.value
@@ -285,6 +304,10 @@ def process_workbook(
 
         total_rows += 1
 
+
+        # ----------------------------------------------------
+        # Read actual Orbit hyperlink if available
+        # ----------------------------------------------------
 
         orbit_link = get_orbit_hyperlink(
             orbit_cell
@@ -303,6 +326,7 @@ def process_workbook(
             skipped_rows += 1
 
             if destination == "Missing Orbit Link":
+
                 missing_orbit_count += 1
 
             continue
@@ -495,6 +519,16 @@ st.markdown(
     color: var(--text-color);
     opacity: 0.70;
     line-height: 1.65;
+    margin: 0;
+    padding-left: 1.35rem;
+}
+
+.processing-list li {
+    margin-bottom: 0.45rem;
+}
+
+.processing-list li:last-child {
+    margin-bottom: 0;
 }
 
 
@@ -705,19 +739,13 @@ with st.container(border=True):
 
     st.markdown(
         """
-        <div class="processing-list">
-
-        - Uses the **PUBLICATION NUMBER** cell as the hyperlink target.
-
-        - Reads the actual hyperlink behind the **ORBIT LINK** cell, regardless of whether it displays **"Open"** or a patent number.
-
-        - Dynamic mode sends **US patents to Google Patents**, **Indian patents to their original Orbit link**, and **all other patents to New Espacenet**.
-
-        - Preserves the existing workbook data and columns.
-
-        - Only the **PUBLICATION NUMBER** cells are updated with hyperlinks.
-
-        </div>
+<ul class="processing-list">
+<li>Uses the <b>PUBLICATION NUMBER</b> cell as the hyperlink target.</li>
+<li>Reads the actual hyperlink behind the <b>ORBIT LINK</b> cell, regardless of whether it displays <b>"Open"</b> or a patent number.</li>
+<li>Dynamic mode sends <b>US patents to Google Patents</b>, <b>Indian patents to their original Orbit link</b>, and <b>all other patents to New Espacenet</b>.</li>
+<li>Preserves the existing workbook data and columns.</li>
+<li>Only the <b>PUBLICATION NUMBER</b> cells are updated with hyperlinks.</li>
+</ul>
         """,
         unsafe_allow_html=True
     )
@@ -821,11 +849,13 @@ with st.container(border=True):
 
     st.markdown(
         """
-        <div class="input-format-note">
-        The <b>ORBIT LINK</b> column must contain the actual Excel
-        hyperlink to the Orbit document. The visible text may be
-        <b>"Open"</b> or the patent publication number.
-        </div>
+<div class="input-format-note">
+<b>PUBLICATION NUMBER</b> is required.
+<b>ORBIT LINK</b> is optional and is only required when the workbook
+contains Indian patents that need to retain their original Orbit document link.
+The visible text in the ORBIT LINK column may be <b>"Open"</b> or the
+patent publication number, but the cell must contain the actual Excel hyperlink.
+</div>
         """,
         unsafe_allow_html=True
     )
@@ -844,8 +874,9 @@ uploaded_file = st.file_uploader(
     type=["xlsx"],
     label_visibility="collapsed",
     help=(
-        "Upload an Excel workbook containing "
-        "PUBLICATION NUMBER and ORBIT LINK columns."
+        "Upload an Excel workbook containing a "
+        "PUBLICATION NUMBER column. "
+        "ORBIT LINK is optional."
     )
 )
 
@@ -910,6 +941,10 @@ if uploaded_file is not None:
         col1, col2 = st.columns(2)
 
 
+        # ----------------------------------------------------
+        # PUBLICATION NUMBER COLUMN
+        # ----------------------------------------------------
+
         with col1:
 
             default_patent_index = 0
@@ -940,13 +975,23 @@ if uploaded_file is not None:
             )
 
 
+        # ----------------------------------------------------
+        # ORBIT LINK COLUMN
+        # ----------------------------------------------------
+
         with col2:
+
+            orbit_options = [
+                "None"
+            ] + available_columns
+
 
             default_orbit_index = 0
 
 
             for idx, name in enumerate(
-                available_columns
+                available_columns,
+                start=1
             ):
 
                 normalized_name = (
@@ -969,8 +1014,21 @@ if uploaded_file is not None:
 
             orbit_column = st.selectbox(
                 "Orbit Link Column",
-                available_columns,
+                orbit_options,
                 index=default_orbit_index
+            )
+
+
+        # ====================================================
+        # ORBIT LINK INFORMATION
+        # ====================================================
+
+        if orbit_column == "None":
+
+            st.info(
+                "No ORBIT LINK column selected. "
+                "This is suitable for lists that do not contain "
+                "Indian patents or when Orbit links are not required."
             )
 
 
@@ -996,18 +1054,28 @@ if uploaded_file is not None:
 
         if mode == "Dynamic":
 
-            st.info(
-                "Dynamic mode: US → Google Patents | "
-                "IN → Original Orbit Link | "
-                "All other patents → New Espacenet"
-            )
+            if orbit_column == "None":
+
+                st.info(
+                    "Dynamic mode: US → Google Patents | "
+                    "IN → Original Orbit Link (requires ORBIT LINK column) | "
+                    "All other patents → New Espacenet"
+                )
+
+            else:
+
+                st.info(
+                    "Dynamic mode: US → Google Patents | "
+                    "IN → Original Orbit Link | "
+                    "All other patents → New Espacenet"
+                )
 
 
         elif mode == "Google Patents":
 
             st.info(
                 "All publication numbers will be linked "
-                "to Google Patents."
+                "to Google Patents. No ORBIT LINK column is required."
             )
 
 
@@ -1015,7 +1083,7 @@ if uploaded_file is not None:
 
             st.info(
                 "All publication numbers will be linked "
-                "to New Espacenet."
+                "to New Espacenet. No ORBIT LINK column is required."
             )
 
 
@@ -1163,8 +1231,8 @@ if run_button:
 
             st.warning(
                 f'{stats["missing_orbit_count"]:,} Indian patent(s) '
-                f'could not be hyperlinked because the ORBIT LINK '
-                f'cell did not contain an actual hyperlink.'
+                f'could not be hyperlinked because no actual '
+                f'ORBIT LINK was available.'
             )
 
 
