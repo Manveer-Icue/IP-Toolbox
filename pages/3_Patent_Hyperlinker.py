@@ -243,6 +243,7 @@ def process_workbook(
 
 
     if patent_column not in headers:
+
         raise ValueError(
             f'Publication number column "{patent_column}" was not found.'
         )
@@ -293,7 +294,6 @@ def process_workbook(
         ):
 
             existing_status_index = col
-
             break
 
 
@@ -301,6 +301,7 @@ def process_workbook(
 
         # Use the existing status column if it is already
         # immediately next to the publication number.
+
         if existing_status_index == patent_col_index + 1:
 
             status_col_index = existing_status_index
@@ -310,18 +311,23 @@ def process_workbook(
             # Remove an existing status column elsewhere
             # so that the output always places it next to
             # PUBLICATION NUMBER.
+
             worksheet.delete_cols(
                 existing_status_index,
                 1
             )
 
+
             # If the deleted column was before the patent
             # column, its index has shifted left.
+
             if existing_status_index < patent_col_index:
 
                 patent_col_index -= 1
 
+
             # Recalculate Orbit column after deletion.
+
             if orbit_col_index is not None:
 
                 if existing_status_index < orbit_col_index:
@@ -331,6 +337,7 @@ def process_workbook(
                 elif existing_status_index == orbit_col_index:
 
                     orbit_col_index = None
+
 
             worksheet.insert_cols(
                 patent_col_index + 1,
@@ -350,6 +357,7 @@ def process_workbook(
 
 
         # Inserting before the Orbit column shifts its index.
+
         if (
             orbit_col_index is not None
             and orbit_col_index > patent_col_index
@@ -397,7 +405,9 @@ def process_workbook(
             status_col_index
         )
 
+
         # Keep the status column blank by default.
+
         status_cell.value = ""
 
 
@@ -470,11 +480,8 @@ def process_workbook(
         # ----------------------------------------------------
 
         patent_cell.hyperlink = target_url
-
         patent_cell.value = patent_number
-
         patent_cell.style = "Hyperlink"
-
 
         linked_rows += 1
 
@@ -571,14 +578,18 @@ st.markdown(
    ============================================================ */
 
 .stApp {
-    background-color: var(--background-color);
-    color: var(--text-color);
+    background-color: #F7F7F5;
+    color: #34383C;
 }
 
 .block-container {
     max-width: 1180px;
-    padding-top: 2rem;
+    padding-top: 4rem;
     padding-bottom: 3.5rem;
+}
+
+* {
+    font-family: 'Inter', sans-serif;
 }
 
 
@@ -599,13 +610,12 @@ st.markdown(
 .sub-title {
     font-size: 1.08rem;
     font-weight: 500;
-    color: var(--text-color);
+    color: #34383C;
     margin-bottom: 1.05rem;
 }
 
-.block-container p {
-    color: var(--text-color);
-    opacity: 0.70;
+.block-container > div[data-testid="stVerticalBlock"] p {
+    color: #73777B;
     line-height: 1.65;
 }
 
@@ -626,8 +636,8 @@ st.markdown(
 
 [data-testid="stVerticalBlockBorderWrapper"] {
     border-radius: 10px;
-    border: 1px solid rgba(128,128,128,0.20);
-    background-color: var(--background-color);
+    border: 1px solid #E5E5E2;
+    background-color: #FFFFFF;
 }
 
 
@@ -637,13 +647,12 @@ st.markdown(
 
 .processing-heading {
     font-weight: 600;
-    color: var(--text-color);
+    color: #4D5155;
     margin-bottom: 0.45rem;
 }
 
 .processing-list {
-    color: var(--text-color);
-    opacity: 0.70;
+    color: #656A6F;
     line-height: 1.65;
     margin: 0;
     padding-left: 1.35rem;
@@ -657,6 +666,10 @@ st.markdown(
     margin-bottom: 0;
 }
 
+.processing-list li::marker {
+    color: #EE3C18;
+}
+
 
 /* ============================================================
    INPUT FORMAT
@@ -664,14 +677,13 @@ st.markdown(
 
 .input-format-heading {
     font-weight: 600;
-    color: var(--text-color);
+    color: #4D5155;
     margin-bottom: 0.75rem;
 }
 
 .input-format-note {
     font-size: 0.82rem;
-    color: var(--text-color);
-    opacity: 0.65;
+    color: #73777B;
     line-height: 1.55;
     margin-top: 0.75rem;
 }
@@ -682,7 +694,7 @@ st.markdown(
    ============================================================ */
 
 .input-table-wrapper {
-    border: 1px solid rgba(128,128,128,0.22);
+    border: 1px solid #D9DEE5;
     border-radius: 9px;
     overflow: hidden;
 }
@@ -696,15 +708,22 @@ div[data-testid="stButton"] button {
     border-radius: 7px;
     font-size: 0.82rem;
     font-weight: 500;
-    border: 1px solid rgba(128,128,128,0.25);
-    background-color: var(--secondary-background-color);
-    color: var(--text-color);
+    border: 1px solid #E1E1DE;
+    background-color: #FFFFFF;
+    color: #4D5155;
     min-height: 36px;
+    transition: all 0.15s ease;
 }
 
 div[data-testid="stButton"] button:hover {
     border-color: #EE3C18;
     color: #EE3C18;
+    background-color: #FFF8F6;
+}
+
+div[data-testid="stButton"] button:focus {
+    box-shadow: 0 0 0 3px rgba(238,60,24,0.12);
+    outline: none;
 }
 
 
@@ -715,7 +734,12 @@ div[data-testid="stButton"] button:hover {
 div[data-testid="stButton"] button[kind="primary"] {
     background-color: #EE3C18 !important;
     border: 1px solid #EE3C18 !important;
+    color: #FFFFFF !important;
+    border-radius: 8px;
+    font-size: 0.86rem;
+    font-weight: 600;
     min-height: 42px;
+    letter-spacing: 0.01em;
     opacity: 1 !important;
 }
 
@@ -737,27 +761,9 @@ div[data-testid="stButton"] button[kind="primary"] div {
     text-shadow: none !important;
 }
 
-/* ------------------------------------------------------------
-   DOWNLOAD BUTTON
-   ------------------------------------------------------------ */
-
-div[data-testid="stDownloadButton"] button {
-    background-color: #EE3C18 !important;
-    border: 1px solid #EE3C18 !important;
-    color: #FFFFFF !important;
-    border-radius: 8px;
-    font-weight: 600 !important;
-    min-height: 42px;
-}
-
-div[data-testid="stDownloadButton"] button *,
-div[data-testid="stDownloadButton"] button p,
-div[data-testid="stDownloadButton"] button span,
-div[data-testid="stDownloadButton"] button div,
-div[data-testid="stDownloadButton"] button svg {
-    color: #FFFFFF !important;
-    fill: #FFFFFF !important;
-    -webkit-text-fill-color: #FFFFFF !important;
+div[data-testid="stButton"] button[kind="primary"]:hover {
+    background-color: #D93414 !important;
+    border-color: #D93414 !important;
 }
 
 
@@ -766,10 +772,20 @@ div[data-testid="stDownloadButton"] button svg {
    ============================================================ */
 
 [data-testid="stFileUploader"] {
-    background-color: var(--secondary-background-color);
-    border: 1px dashed rgba(128,128,128,0.30);
+    background-color: #FFFFFF;
+    border: 1px dashed #D8D8D4;
     border-radius: 10px;
     padding: 0.8rem 1rem;
+    box-shadow: 0 2px 7px rgba(0,0,0,0.025);
+}
+
+[data-testid="stFileUploader"]:hover {
+    border-color: #EE3C18;
+}
+
+[data-testid="stFileUploaderDropzone"] {
+    background-color: #FAFAF9;
+    border: none;
 }
 
 
@@ -785,8 +801,7 @@ div[data-testid="stDownloadButton"] button svg {
 
 .summary-label {
     font-size: 0.88rem;
-    color: var(--text-color);
-    opacity: 0.70;
+    color: #656A6F;
 }
 
 
@@ -795,18 +810,81 @@ div[data-testid="stDownloadButton"] button svg {
    ============================================================ */
 
 div[data-testid="stDownloadButton"] button {
-    background-color: #EE3C18;
-    border: 1px solid #EE3C18;
+    background-color: #EE3C18 !important;
+    border: 1px solid #EE3C18 !important;
     color: #FFFFFF !important;
     border-radius: 8px;
-    font-weight: 600;
+    font-size: 0.84rem;
+    font-weight: 600 !important;
     min-height: 42px;
+    opacity: 1 !important;
 }
 
+div[data-testid="stDownloadButton"] button *,
 div[data-testid="stDownloadButton"] button p,
 div[data-testid="stDownloadButton"] button span,
-div[data-testid="stDownloadButton"] button div {
+div[data-testid="stDownloadButton"] button div,
+div[data-testid="stDownloadButton"] button svg {
     color: #FFFFFF !important;
+    fill: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    opacity: 1 !important;
+    font-weight: 700 !important;
+}
+
+div[data-testid="stDownloadButton"] button:hover {
+    background-color: #D93414 !important;
+    border-color: #D93414 !important;
+}
+
+
+/* ============================================================
+   METRICS
+   ============================================================ */
+
+div[data-testid="stMetric"] {
+    background: #FFFFFF;
+    border: 1px solid #E5E5E2;
+    border-radius: 9px;
+    padding: 0.9rem 1rem;
+    min-height: 88px;
+    box-shadow: 0 2px 7px rgba(0,0,0,0.025);
+}
+
+div[data-testid="stMetricLabel"] {
+    color: #85898D !important;
+    font-size: 0.72rem !important;
+    font-weight: 500 !important;
+}
+
+div[data-testid="stMetricValue"] {
+    color: #2D3033 !important;
+    font-size: 1.35rem !important;
+    font-weight: 600 !important;
+}
+
+
+/* ============================================================
+   ALERTS
+   ============================================================ */
+
+div[data-testid="stAlert"] {
+    border-radius: 8px;
+    font-size: 0.84rem;
+    border-width: 1px;
+}
+
+div[data-testid="stAlert"] p {
+    line-height: 1.55;
+}
+
+
+/* ============================================================
+   SPINNER
+   ============================================================ */
+
+[data-testid="stSpinner"] {
+    color: #EE3C18;
 }
 
 
@@ -814,8 +892,10 @@ div[data-testid="stDownloadButton"] button div {
    DIVIDERS
    ============================================================ */
 
-hr {
-    border-top: 1px solid rgba(128,128,128,0.22);
+.block-container hr {
+    border: none;
+    border-top: 1px solid #E2E2DF;
+    margin: 1.8rem 0;
 }
 
 
@@ -1133,7 +1213,6 @@ if uploaded_file is not None:
                 ]:
 
                     default_patent_index = idx
-
                     break
 
 
@@ -1177,7 +1256,6 @@ if uploaded_file is not None:
                 ]:
 
                     default_orbit_index = idx
-
                     break
 
 
@@ -1463,5 +1541,3 @@ if run_button:
             f"An error occurred while processing "
             f"the workbook: {e}"
         )
-
-        st.exception(e)
